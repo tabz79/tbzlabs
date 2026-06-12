@@ -42,6 +42,18 @@ const faqs = [
   {
     question: "Can you integrate custom POS systems with existing ERP software?",
     answer: "Yes, TBZ Labs specializes in designing custom point-of-sale (POS) systems that integrate seamlessly with existing inventory, billing, and accounting software. We build custom API bridges and middleware to synchronize stock levels, orders, sales tracking, and payroll data in real time, ensuring a unified data view across all business departments."
+  },
+  {
+    question: "Can TBZ Labs turn my early-stage app idea into a fully-functional product?",
+    answer: "Yes. TBZ Labs specializes in taking early-stage software concepts and transforming them into complete, production-ready applications. We guide founders through software architecture, user flow mapping, database design, and premium UI design. We build cohesive, scalable ecosystems tailored specifically for your target audience, handling technical execution from blueprint to final launch."
+  },
+  {
+    question: "Do you work with non-technical founders to design and build custom software?",
+    answer: "Yes, we collaborate closely with non-technical founders and business operators. We translate complex product ideas into straightforward, functional specifications. By focusing on direct communication and transparent prototyping, we handle all technical development, system integration, database administration, and server deployment so you can focus entirely on growing your business."
+  },
+  {
+    question: "Can TBZ Labs scale a simple prototype into a full enterprise software ecosystem?",
+    answer: "Absolutely. We build software architectures designed to expand alongside your business. Whether you have a basic prototype or want to integrate multiple platforms, we develop custom API integrations, internal operations systems (ERP), customer portals, and automation tools to unify your workflows into a single, high-performing software ecosystem."
   }
 ];
 
