@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  --color-darkBg: #030303;
+  --color-darkCard: #09090b;
+  --color-darkBorder: #1c1c1f;
+  --color-accentViolet: #8b5cf6;
+  --color-accentEmerald: #10b981;
+  --color-accentCyan: #06b6d4;
+
+  --font-sans: 'Outfit', sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Custom Base Elements */
+body {
+  background-color: #030303;
+  color: #f4f4f5;
+  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom UI Utility Classes */
+
+/* Subtle background glowing grids */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+.bg-dot-pattern {
+  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(9, 9, 11, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-panel-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(15, 15, 18, 0.8);
+  border-color: rgba(139, 92, 246, 0.25);
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.06);
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #030303;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c1c1f;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #27272a;
+}
+
+/* Database Workflow Connections (Edu-Assist Custom SVG/CSS styling) */
+.flow-line {
+  stroke-dasharray: 8;
+  animation: flowMove 15s linear infinite;
+}
+
+@keyframes flowMove {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* Shiny hover badge glow */
+.badge-glow {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+}
+
+/* Floating animation */
+.animate-float {
+  animation: floatEffect 6s ease-in-out infinite;
+}
+
+@keyframes floatEffect {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
