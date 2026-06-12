@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, MessageSquare } from 'lucide-react';
 import logoSvg from '../assets/logo.svg';
 
-export default function Navbar({ onContactClick }) {
+export default function Navbar({ onContactClick, currentView, onNavigate }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -16,12 +16,17 @@ export default function Navbar({ onContactClick }) {
   }, []);
 
   const navLinks = [
-    { name: 'SynOS', href: '#/synos' },
-    { name: 'See Our Work', href: '#systems' },
-    { name: 'What We Build', href: '#capabilities' },
-    { name: 'How I Work', href: '#how-i-work' },
-    { name: 'About', href: '#about' },
+    { name: 'SynOS', href: '/synos', target: 'synos' },
+    { name: 'See Our Work', href: '/#systems', target: 'systems' },
+    { name: 'What We Build', href: '/#capabilities', target: 'capabilities' },
+    { name: 'How I Work', href: '/#how-i-work', target: 'how-i-work' },
+    { name: 'About', href: '/#about', target: 'about' },
   ];
+
+  const handleLinkClick = (e, link) => {
+    e.preventDefault();
+    onNavigate?.(link.target);
+  };
 
   return (
     <motion.nav
@@ -36,7 +41,14 @@ export default function Navbar({ onContactClick }) {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center group">
+        <a 
+          href="/" 
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate?.('home');
+          }}
+          className="flex items-center group"
+        >
           <img 
             src={logoSvg} 
             alt="TBZ Labs" 
@@ -50,6 +62,7 @@ export default function Navbar({ onContactClick }) {
             <a
               key={link.name}
               href={link.href}
+              onClick={(e) => handleLinkClick(e, link)}
               className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
             >
               {link.name}
@@ -93,7 +106,10 @@ export default function Navbar({ onContactClick }) {
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => {
+                    setIsOpen(false);
+                    handleLinkClick(e, link);
+                  }}
                   className="text-lg text-zinc-400 hover:text-white transition-colors duration-200"
                 >
                   {link.name}

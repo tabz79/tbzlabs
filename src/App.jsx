@@ -24,48 +24,80 @@ function App() {
   };
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash;
+    const handleLocationChange = () => {
       const path = window.location.pathname;
-      if (hash === '#/synos' || path === '/synos' || path === '/synos/') {
+      const hash = window.location.hash;
+      if (path === '/synos' || path === '/synos/' || hash === '#/synos' || hash === '#synos') {
         setCurrentView('synos');
         window.scrollTo({ top: 0, behavior: 'instant' });
       } else {
         setCurrentView('home');
+        // Handle legacy hash scroll on direct landing
+        if (hash) {
+          const id = hash.replace('#', '');
+          setTimeout(() => {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
       }
     };
 
     // Run on initial load
-    handleHashChange();
+    handleLocationChange();
 
-    window.addEventListener('hashchange', handleHashChange);
-    // Also listen to popstate if pushState is used
-    window.addEventListener('popstate', handleHashChange);
+    window.addEventListener('popstate', handleLocationChange);
     return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('popstate', handleHashChange);
+      window.removeEventListener('popstate', handleLocationChange);
     };
   }, []);
 
-  const navigateToSynos = () => {
-    // Set hash for simple SPA navigation
-    window.location.hash = '#/synos';
+  useEffect(() => {
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.rel = 'canonical';
+      document.head.appendChild(canonicalLink);
+    }
+    const cleanUrl = window.location.origin + (currentView === 'synos' ? '/synos' : '/');
+    canonicalLink.setAttribute('href', cleanUrl);
+  }, [currentView]);
+
+  const handleNavigate = (target) => {
+    if (target === '/synos' || target === 'synos') {
+      window.history.pushState({}, '', '/synos');
+      setCurrentView('synos');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } else if (target === '/' || target === 'home' || target === '') {
+      window.history.pushState({}, '', '/');
+      setCurrentView('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const sectionId = target.replace('#', '').replace('/', '');
+      if (currentView !== 'home') {
+        window.history.pushState({}, '', '/');
+        setCurrentView('home');
+        setTimeout(() => {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 150);
+      } else {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
   };
 
-  const navigateToHome = (hash = '#systems') => {
-    // If we have a pathname of /synos, clear it to prevent sticking
-    if (window.location.pathname === '/synos' || window.location.pathname === '/synos/') {
-      window.history.pushState({}, '', '/' + hash);
-      // Trigger update manually
-      setCurrentView('home');
-      // Scroll to hash target
-      setTimeout(() => {
-        const id = hash.replace('#', '');
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      window.location.hash = hash;
-    }
+  const navigateToSynos = () => {
+    handleNavigate('/synos');
+  };
+
+  const navigateToHome = (hash = 'systems') => {
+    handleNavigate(hash);
   };
 
   return (
@@ -83,16 +115,16 @@ function App() {
             transition={{ duration: 0.35, ease: 'easeInOut' }}
             className="flex-1 flex flex-col justify-between"
           >
-            <Navbar onContactClick={() => handleOpenContact('general')} />
+            <Navbar currentView={currentView} onNavigate={handleNavigate} onContactClick={() => handleOpenContact('general')} />
             <main className="flex-1">
-              <Hero onContactClick={() => handleOpenContact('general')} />
+              <Hero onNavigate={handleNavigate} onContactClick={() => handleOpenContact('general')} />
               <SystemsBuilt onExploreSynos={navigateToSynos} onContactClick={(projName) => handleOpenContact('project', projName)} />
               <AboutStudio />
               <WhatWeBuild />
               <HowIWork />
               <Contact />
             </main>
-            <Footer />
+            <Footer onNavigate={handleNavigate} />
           </motion.div>
         ) : (
           <motion.div
@@ -103,7 +135,7 @@ function App() {
             transition={{ duration: 0.35, ease: 'easeInOut' }}
             className="flex-1 flex flex-col justify-between"
           >
-            <SynosPage onBack={() => navigateToHome('#systems')} onContactClick={() => handleOpenContact('synos')} />
+            <SynosPage onBack={() => navigateToHome('systems')} onContactClick={() => handleOpenContact('synos')} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -5,7 +5,7 @@ import {
   Cpu, Activity, Zap, CheckCircle2
 } from 'lucide-react';
 
-export default function Hero({ onContactClick }) {
+export default function Hero({ onContactClick, onNavigate }) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -116,8 +116,12 @@ export default function Hero({ onContactClick }) {
               <ArrowRight className="w-4.5 h-4.5" />
             </button>
             <a
-              href="#systems"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800 text-zinc-350 hover:text-white transition-all text-sm font-semibold"
+              href="/#systems"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate?.('systems');
+              }}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800 text-zinc-350 hover:text-white transition-all text-sm font-semibold cursor-pointer"
             >
               See Our Work
             </a>

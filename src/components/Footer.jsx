@@ -2,15 +2,20 @@ import React from 'react';
 import { Mail } from 'lucide-react';
 import logoSvg from '../assets/logo.svg';
 
-export default function Footer() {
+export default function Footer({ onNavigate }) {
   const links = [
-    { name: 'Home', href: '#' },
-    { name: 'SynOS', href: '#/synos' },
-    { name: 'See Our Work', href: '#systems' },
-    { name: 'What We Build', href: '#capabilities' },
-    { name: 'How I Work', href: '#how-i-work' },
-    { name: 'About', href: '#about' },
+    { name: 'Home', href: '/', target: 'home' },
+    { name: 'SynOS', href: '/synos', target: 'synos' },
+    { name: 'See Our Work', href: '/#systems', target: 'systems' },
+    { name: 'What We Build', href: '/#capabilities', target: 'capabilities' },
+    { name: 'How I Work', href: '/#how-i-work', target: 'how-i-work' },
+    { name: 'About', href: '/#about', target: 'about' },
   ];
+
+  const handleLinkClick = (e, link) => {
+    e.preventDefault();
+    onNavigate?.(link.target);
+  };
 
   return (
     <footer className="border-t border-zinc-900 bg-[#020204] py-16">
@@ -18,7 +23,14 @@ export default function Footer() {
         
         {/* Left branding */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left max-w-xs">
-          <a href="#" className="flex items-center group mb-3">
+          <a 
+            href="/" 
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate?.('home');
+            }}
+            className="flex items-center group mb-3"
+          >
             <img 
               src={logoSvg} 
               alt="TBZ Labs" 
@@ -36,6 +48,7 @@ export default function Footer() {
             <a
               key={link.name}
               href={link.href}
+              onClick={(e) => handleLinkClick(e, link)}
               className="text-sm text-zinc-400 hover:text-white transition-colors"
             >
               {link.name}
