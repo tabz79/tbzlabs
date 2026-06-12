@@ -904,7 +904,7 @@ export default function SynosPage({ onBack, onContactClick }) {
           </div>
 
           {/* Footer Value Propositions */}
-          <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 mt-8 sm:mt-16 pt-4 sm:pt-8 border-t border-zinc-900/60">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-8 sm:mt-16 pt-4 sm:pt-8 border-t border-zinc-900/60">
             {[
               { title: 'Real-time Event Engine', desc: 'Every action updates all connected systems instantly', icon: Network, color: 'text-teal-400 bg-teal-500/10 border-teal-500/20' },
               { title: 'Zero Manual Handoffs', desc: 'Automated queues, validations and notifications', icon: Sparkles, color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' },
@@ -913,13 +913,13 @@ export default function SynosPage({ onBack, onContactClick }) {
             ].map((prop, idx) => {
               const PropIcon = prop.icon;
               return (
-                <div key={idx} className="flex items-start gap-1.5 sm:gap-3.5 p-2 sm:p-4 rounded-xl sm:rounded-2xl bg-zinc-950/15 border border-zinc-900 text-left">
-                  <div className={`w-5 h-5 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl border flex items-center justify-center shrink-0 mt-0.5 ${prop.color}`}>
-                    <PropIcon className="w-2.5 h-2.5 sm:w-4 sm:h-4" />
+                <div key={idx} className="flex items-start gap-3 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-zinc-950/15 border border-zinc-900 text-left">
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl border flex items-center justify-center shrink-0 mt-0.5 ${prop.color}`}>
+                    <PropIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                   <div>
-                    <h4 className="text-[8px] sm:text-xs md:text-base font-bold text-white font-display leading-tight">{prop.title}</h4>
-                    <p className="text-[7px] sm:text-[10px] md:text-sm text-zinc-400 mt-0.5 sm:mt-1 font-light leading-relaxed truncate sm:whitespace-normal">{prop.desc}</p>
+                    <h4 className="text-xs sm:text-sm md:text-base font-bold text-white font-display leading-tight">{prop.title}</h4>
+                    <p className="text-[10px] sm:text-xs md:text-sm text-zinc-400 mt-1 font-light leading-relaxed">{prop.desc}</p>
                   </div>
                 </div>
               );
