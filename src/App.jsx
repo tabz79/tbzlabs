@@ -123,8 +123,8 @@ function App() {
               <AboutStudio />
               <WhatWeBuild />
               <HowIWork />
-              <FAQ />
               <Contact />
+              <FAQ />
             </main>
             <Footer onNavigate={handleNavigate} />
           </motion.div>
