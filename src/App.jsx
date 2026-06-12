@@ -86,8 +86,8 @@ function App() {
             <Navbar onContactClick={() => handleOpenContact('general')} />
             <main className="flex-1">
               <Hero onContactClick={() => handleOpenContact('general')} />
-              <AboutStudio />
               <SystemsBuilt onExploreSynos={navigateToSynos} onContactClick={(projName) => handleOpenContact('project', projName)} />
+              <AboutStudio />
               <WhatWeBuild />
               <HowIWork />
               <Contact />

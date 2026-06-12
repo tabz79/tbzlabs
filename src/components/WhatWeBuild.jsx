@@ -56,7 +56,7 @@ export default function WhatWeBuild() {
   };
 
   return (
-    <section id="capabilities" className="py-24 border-t border-zinc-900 relative">
+    <section id="capabilities" className="py-24 relative">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Header */}
