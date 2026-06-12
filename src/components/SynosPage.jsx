@@ -357,53 +357,53 @@ export default function SynosPage({ onBack, onContactClick }) {
           }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
           onClick={handleClick}
-          className={`col-span-1 ${colSpanClass} p-1 rounded-3xl border transition-all duration-500 cursor-pointer bg-[#05050a]/80 backdrop-blur-md relative overflow-hidden group select-none flex flex-col md:flex-row items-stretch justify-between ${
+          className={`col-span-1 ${colSpanClass} p-1 rounded-2xl md:rounded-3xl border transition-all duration-500 cursor-pointer bg-[#05050a]/80 backdrop-blur-md relative overflow-hidden group select-none flex flex-col lg:flex-row items-stretch justify-between ${
             isActive 
               ? 'border-teal-500/80 shadow-[0_0_20px_rgba(45,212,191,0.15)] ring-1 ring-teal-500/20' 
               : 'border-zinc-900/90 hover:border-zinc-800'
           }`}
         >
           {/* Left Description Side */}
-          <div className="w-full md:w-[42%] p-8 flex flex-col justify-between text-left">
+          <div className="w-full lg:w-[42%] p-4 sm:p-5 lg:p-8 flex flex-col justify-between text-left">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`p-1.5 rounded-lg bg-zinc-900 border border-zinc-850 flex items-center justify-center ${node.colorClass.split(' ')[0]}`}>
-                  <Icon className="w-4 h-4" />
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-3">
+                <div className={`p-1 sm:p-1.5 rounded-lg bg-zinc-900 border border-zinc-850 flex items-center justify-center ${node.colorClass.split(' ')[0]}`}>
+                  <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
                 </div>
-                <span className="text-xs font-sans font-bold text-zinc-400 uppercase tracking-widest">{node.category}</span>
+                <span className="text-[10px] sm:text-xs font-sans font-bold text-zinc-400 uppercase tracking-widest">{node.category}</span>
               </div>
-              <h3 className="text-2xl font-extrabold text-white tracking-tight leading-tight group-hover:text-teal-400 transition-colors mt-2">
+              <h3 className="text-sm sm:text-base lg:text-2xl font-extrabold text-white tracking-tight leading-tight group-hover:text-teal-400 transition-colors mt-1 sm:mt-2">
                 {node.title}
               </h3>
-              <p className="text-sm text-zinc-400 mt-2 font-light leading-relaxed">
+              <p className="text-xs lg:text-sm text-zinc-400 mt-1 sm:mt-2 font-light leading-relaxed">
                 {node.subtitle}
               </p>
             </div>
             <button
               onClick={handleClick}
-              className="w-fit py-2 px-4 rounded-full bg-teal-500/10 border border-teal-500/20 hover:bg-teal-500/20 hover:border-teal-500/40 text-xs font-sans font-semibold text-teal-400 flex items-center gap-1.5 mt-6 transition-all duration-300 border-none cursor-pointer"
+              className="w-fit py-1 px-2.5 sm:py-2 sm:px-4 rounded-full bg-teal-500/10 border border-teal-500/20 hover:bg-teal-500/20 hover:border-teal-500/40 text-[10px] sm:text-xs font-sans font-semibold text-teal-400 flex items-center gap-1 sm:gap-1.5 mt-2 sm:mt-6 transition-all duration-300 border-none cursor-pointer"
             >
               <span>{getButtonText(nodeId)}</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
 
           {/* Right Visual Side */}
-          <div className="w-full md:w-[58%] p-4 bg-zinc-950/40 border-t md:border-t-0 md:border-l border-zinc-900/90 flex flex-col justify-between relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-5 bg-zinc-950 border-b border-zinc-900/80 px-3 flex items-center gap-1.5 z-10">
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+          <div className="w-full lg:w-[58%] p-2 sm:p-4 bg-zinc-950/40 border-t lg:border-t-0 lg:border-l border-zinc-900/90 flex flex-col justify-between relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-3.5 sm:h-5 bg-zinc-950 border-b border-zinc-900/80 px-2 sm:px-3 flex items-center gap-1 sm:gap-1.5 z-10">
+              <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-zinc-800" />
+              <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-zinc-800" />
+              <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-zinc-800" />
             </div>
-            <div className="w-full h-full min-h-[240px] rounded-xl overflow-hidden bg-[#0c0c0f] border border-zinc-850 relative group/screenshot mt-3 flex flex-col justify-end">
+            <div className="w-full h-full min-h-[120px] sm:min-h-[160px] lg:min-h-[240px] rounded-xl overflow-hidden bg-[#0c0c0f] border border-zinc-850 relative group/screenshot mt-2 sm:mt-3 flex flex-col justify-end">
               <img 
                 src={node.screenshot} 
                 alt={node.title} 
                 className="w-full h-full object-cover object-top brightness-[0.75] group-hover:brightness-95 transition-all duration-500 group-hover:scale-[1.04]"
               />
               <div className="absolute inset-0 bg-zinc-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
-                <span className="px-4 py-2.5 rounded-xl bg-teal-600/90 text-white font-sans text-xs font-bold tracking-wider flex items-center gap-1.5 shadow-lg">
-                  <ZoomIn className="w-4 h-4" /> Enlarge Screen
+                <span className="px-2 py-1.5 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-xl bg-teal-600/90 text-white font-sans text-[10px] sm:text-xs font-bold tracking-wider flex items-center gap-1 sm:gap-1.5 shadow-lg">
+                  <ZoomIn className="w-3 h-3 sm:w-4 sm:h-4" /> Enlarge Screen
                 </span>
               </div>
             </div>
@@ -421,46 +421,46 @@ export default function SynosPage({ onBack, onContactClick }) {
           }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
           onClick={handleClick}
-          className={`col-span-1 p-1 rounded-3xl border transition-all duration-500 cursor-pointer bg-[#05050a]/80 backdrop-blur-md relative overflow-hidden group select-none flex flex-col justify-between min-h-[340px] ${
+          className={`col-span-1 p-1 rounded-2xl md:rounded-3xl border transition-all duration-500 cursor-pointer bg-[#05050a]/80 backdrop-blur-md relative overflow-hidden group select-none flex flex-col justify-between min-h-[180px] sm:min-h-[240px] lg:min-h-[340px] ${
             isActive 
               ? 'border-teal-500/80 shadow-[0_0_20px_rgba(45,212,191,0.15)] ring-1 ring-teal-500/20' 
               : 'border-zinc-900/90 hover:border-zinc-800'
           }`}
         >
           {/* Top Description Part */}
-          <div className="p-6 flex-1 flex flex-col justify-between text-left">
+          <div className="p-3 sm:p-4 lg:p-6 flex-1 flex flex-col justify-between text-left">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className={`p-1.5 rounded-lg bg-zinc-900 border border-zinc-850 flex items-center justify-center ${node.colorClass.split(' ')[0]}`}>
-                  <Icon className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                <div className={`p-1 sm:p-1.5 rounded-lg bg-zinc-900 border border-zinc-850 flex items-center justify-center ${node.colorClass.split(' ')[0]}`}>
+                  <Icon className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
                 </div>
-                <span className="text-xs font-sans font-bold text-zinc-500 uppercase tracking-widest">{node.category}</span>
+                <span className="text-[10px] sm:text-xs font-sans font-bold text-zinc-500 uppercase tracking-widest">{node.category}</span>
               </div>
-              <h3 className="text-base font-bold text-white tracking-tight leading-tight group-hover:text-teal-400 transition-colors mt-2">
+              <h3 className="text-xs sm:text-sm lg:text-base font-bold text-white tracking-tight leading-tight group-hover:text-teal-400 transition-colors mt-1 sm:mt-2">
                 {node.title}
               </h3>
-              <p className="text-xs text-zinc-400 mt-1.5 font-light leading-relaxed line-clamp-2">
+              <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1.5 font-light leading-relaxed line-clamp-2">
                 {node.subtitle}
               </p>
             </div>
             <button
               onClick={handleClick}
-              className="w-fit py-1.5 px-3 rounded-full bg-teal-500/10 border border-teal-500/20 hover:bg-teal-500/20 hover:border-teal-500/40 text-[10px] font-sans font-semibold text-teal-400 flex items-center gap-1 mt-4 transition-all duration-300 border-none cursor-pointer"
+              className="w-fit py-1 px-2.5 sm:py-1.5 sm:px-3 rounded-full bg-teal-500/10 border border-teal-500/20 hover:bg-teal-500/20 hover:border-teal-500/40 text-[10px] font-sans font-semibold text-teal-400 flex items-center gap-1 mt-1.5 sm:mt-4 transition-all duration-300 border-none cursor-pointer"
             >
               <span>{getButtonText(nodeId)}</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-2 h-2 sm:w-3 sm:h-3" />
             </button>
           </div>
 
           {/* Bottom Screen Thumbnail */}
-          <div className="px-4 pb-4 w-full">
-            <div className="w-full h-40 rounded-xl overflow-hidden bg-zinc-900 border border-zinc-850/80 relative flex flex-col justify-end">
-              <div className="absolute top-0 left-0 right-0 h-4 bg-zinc-950 border-b border-zinc-900/80 px-2 flex items-center gap-1 z-10">
-                <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-                <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-                <span className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+          <div className="px-1.5 pb-1.5 sm:px-4 sm:pb-4 w-full">
+            <div className="w-full h-20 sm:h-28 lg:h-40 rounded-lg sm:rounded-xl overflow-hidden bg-zinc-900 border border-zinc-850/80 relative flex flex-col justify-end">
+              <div className="absolute top-0 left-0 right-0 h-3 sm:h-4 bg-zinc-950 border-b border-zinc-900/80 px-2 flex items-center gap-1 z-10">
+                <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-zinc-800" />
+                <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-zinc-800" />
+                <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-zinc-800" />
               </div>
-              <div className="w-full h-[calc(100%-12px)] overflow-hidden bg-[#0c0c0f]">
+              <div className="w-full h-[calc(100%-8px)] sm:h-[calc(100%-12px)] overflow-hidden bg-[#0c0c0f]">
                 <img 
                   src={node.screenshot} 
                   alt={node.title} 
@@ -468,8 +468,8 @@ export default function SynosPage({ onBack, onContactClick }) {
                 />
               </div>
               <div className="absolute inset-0 bg-zinc-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
-                <span className="px-2.5 py-1.5 rounded-lg bg-teal-600/90 text-white font-sans text-[10px] font-bold tracking-wider flex items-center gap-1 shadow-md">
-                  <ZoomIn className="w-3.5 h-3.5" /> Inspect Screen
+                <span className="px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded bg-teal-600/90 text-white font-sans text-[10px] font-bold tracking-wider flex items-center gap-1 shadow-md">
+                  <ZoomIn className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" /> Inspect Screen
                 </span>
               </div>
             </div>
@@ -694,7 +694,7 @@ export default function SynosPage({ onBack, onContactClick }) {
       {/* CHAPTER 0: CINEMATIC HERO */}
       <section 
         ref={sectionRefs.hero}
-        className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center items-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto"
+        className="snap-start md:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center items-center py-10 md:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto"
       >
           <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-violet-650/5 rounded-full blur-[120px] pointer-events-none" />
                    <div className="text-center max-w-5xl relative z-10 mb-16">
@@ -747,7 +747,7 @@ export default function SynosPage({ onBack, onContactClick }) {
               </span>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
               {[
                 { id: 'reception', name: 'Operations', glow: 'shadow-[0_0_30px_rgba(59,130,246,0.15)] border-blue-500/30 text-blue-400', desc: 'Reception & Typing' },
                 { id: 'laboratory', name: 'Pathology', glow: 'shadow-[0_0_30px_rgba(6,182,212,0.15)] border-cyan-500/30 text-cyan-400', desc: 'Workbench & Validation' },
@@ -759,7 +759,7 @@ export default function SynosPage({ onBack, onContactClick }) {
                 return (
                   <div 
                      key={item.id}
-                     className={`p-6 rounded-2xl border transition-all duration-1000 flex flex-col justify-between h-36 bg-zinc-950/40 backdrop-blur-sm relative overflow-hidden group ${
+                     className={`p-2.5 sm:p-6 rounded-2xl border transition-all duration-1000 flex flex-col justify-between h-24 sm:h-36 bg-zinc-950/40 backdrop-blur-sm relative overflow-hidden group select-none ${
                       isAwakened 
                         ? `${item.glow} bg-zinc-950/80` 
                         : 'border-zinc-900 text-zinc-650 opacity-40'
@@ -770,19 +770,19 @@ export default function SynosPage({ onBack, onContactClick }) {
                     )}
 
                     <div className="flex justify-between items-start">
-                      <span className="text-sm font-mono tracking-wider opacity-70">SYSTEM DEPT // 0{awakenedNodes.indexOf(item.id) + 1 || '?'}</span>
+                      <span className="text-[10px] sm:text-xs font-mono tracking-wider opacity-70">DEPT 0{awakenedNodes.indexOf(item.id) + 1 || '?'}</span>
                       {isAwakened ? (
-                        <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse shadow-glow" />
+                        <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-current animate-pulse shadow-glow" />
                       ) : (
-                        <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+                        <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-zinc-800" />
                       )}
                     </div>
 
-                    <div className="text-left mt-6">
-                      <div className="text-base font-bold tracking-tight text-white group-hover:text-violet-400 transition-colors">
+                    <div className="text-left mt-1 sm:mt-6">
+                      <div className="text-xs sm:text-sm lg:text-base font-bold tracking-tight text-white group-hover:text-violet-400 transition-colors leading-none">
                         {item.name}
                       </div>
-                      <div className="text-sm text-zinc-400 font-mono mt-1">
+                      <div className="text-[10px] sm:text-xs text-zinc-400 font-mono mt-0.5 sm:mt-1 truncate sm:whitespace-normal">
                         {isAwakened ? item.desc : 'Sync pending...'}
                       </div>
                     </div>
@@ -795,7 +795,7 @@ export default function SynosPage({ onBack, onContactClick }) {
         {/* EXPERIENCE 1: THE SYNOS NETWORK TOPOLOGY */}
         <section 
           ref={sectionRefs.topology}
-          className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto"
+          className="snap-start md:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-10 md:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto"
         >
           {/* Experience Header */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-16">
@@ -835,26 +835,26 @@ export default function SynosPage({ onBack, onContactClick }) {
           </div>
 
           {/* Asymmetric Flagship Grid Overhaul (ChatGPT Layout style) */}
-          <div className="flex flex-col gap-6 w-full text-left">
+          <div className="flex flex-col gap-4 md:gap-6 w-full text-left">
             
             {/* Row 1: Flagship Highlights (2 columns - Director & Radiologist) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-stretch">
               {/* Card 1: Director Command Center */}
-              {renderGridCard('director', 'lg:col-span-7', true)}
+              {renderGridCard('director', 'col-span-1 lg:col-span-7', true)}
 
               {/* Card 2: Radiologist Workspace */}
-              {renderGridCard('radiologist', 'lg:col-span-5', true)}
+              {renderGridCard('radiologist', 'col-span-1 lg:col-span-5', true)}
             </div>
 
             {/* Row 2: Core Operations & Testing (3 columns) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 items-stretch">
               {renderGridCard('reception', '', false)}
               {renderGridCard('phlebotomy', '', false)}
               {renderGridCard('workbench', '', false)}
             </div>
 
             {/* Row 3: Diagnostics & Sign-off (4 columns) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 items-stretch">
               {renderGridCard('typing', '', false)}
               {renderGridCard('pathologist', '', false)}
               {renderGridCard('delivery', '', false)}
@@ -862,39 +862,39 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
 
             {/* Row 4: Administrative Operations (5 columns) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 items-stretch">
               {renderGridCard('finance', '', false)}
               {renderGridCard('expense', '', false)}
               {renderGridCard('payroll', '', false)}
               {renderGridCard('payrollIntel', '', false)}
 
               {/* Decorative Network Card */}
-              <div className="p-6 rounded-3xl border border-zinc-900/90 bg-gradient-to-br from-teal-950/20 via-[#05050a] to-blue-950/10 flex flex-col justify-between min-h-[340px] relative overflow-hidden group select-none">
+              <div className="col-span-1 lg:col-span-1 p-4 md:p-6 rounded-2xl md:rounded-3xl border border-zinc-900/90 bg-gradient-to-br from-teal-950/20 via-[#05050a] to-blue-950/10 flex flex-col justify-between min-h-[180px] sm:min-h-[240px] lg:min-h-[340px] relative overflow-hidden group select-none">
                 <div className="absolute inset-0 bg-dot-pattern opacity-10 pointer-events-none" />
                 
                 {/* Glowing animation particles */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-teal-500/5 rounded-full blur-2xl animate-pulse pointer-events-none" />
                 
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
-                      <Network className="w-4 h-4 animate-spin-slow" />
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-3">
+                    <div className="p-1 sm:p-1.5 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
+                      <Network className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin-slow" />
                     </div>
-                    <span className="text-[10px] font-sans font-bold text-teal-400 uppercase tracking-widest">Network Orchestrator</span>
+                    <span className="text-[10px] sm:text-xs font-sans font-bold text-teal-400 uppercase tracking-widest">Network Orchestrator</span>
                   </div>
-                  <h3 className="text-base font-bold text-white tracking-tight leading-tight mt-1">
+                  <h3 className="text-xs sm:text-sm lg:text-base font-bold text-white tracking-tight leading-tight mt-1 sm:mt-2">
                     Every Screen. Connected.
                   </h3>
-                  <p className="text-xs text-zinc-400 mt-2 font-light leading-relaxed">
+                  <p className="text-xs text-zinc-400 mt-1 sm:mt-2 font-light leading-relaxed">
                     A websocket event loop syncing all diagnostic modules.
                   </p>
                 </div>
                 
                 {/* Micro animation block */}
-                <div className="h-10 w-full flex items-center justify-around mt-4 bg-zinc-900/40 border border-zinc-850 rounded-xl px-3 relative overflow-hidden">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
+                <div className="h-8 sm:h-10 w-full flex items-center justify-around mt-3 sm:mt-4 bg-zinc-900/40 border border-zinc-850 rounded-lg sm:rounded-xl px-2 sm:px-3 relative overflow-hidden">
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-mono text-emerald-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    <span>Real-time Sync Active</span>
+                    <span>Sync Active</span>
                   </div>
                 </div>
               </div>
@@ -904,7 +904,7 @@ export default function SynosPage({ onBack, onContactClick }) {
           </div>
 
           {/* Footer Value Propositions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 pt-8 border-t border-zinc-900/60">
+          <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6 mt-8 sm:mt-16 pt-4 sm:pt-8 border-t border-zinc-900/60">
             {[
               { title: 'Real-time Event Engine', desc: 'Every action updates all connected systems instantly', icon: Network, color: 'text-teal-400 bg-teal-500/10 border-teal-500/20' },
               { title: 'Zero Manual Handoffs', desc: 'Automated queues, validations and notifications', icon: Sparkles, color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' },
@@ -913,13 +913,13 @@ export default function SynosPage({ onBack, onContactClick }) {
             ].map((prop, idx) => {
               const PropIcon = prop.icon;
               return (
-                <div key={idx} className="flex items-start gap-3.5 p-4 rounded-2xl bg-zinc-950/15 border border-zinc-900 text-left">
-                  <div className={`w-8 h-8 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 ${prop.color}`}>
-                    <PropIcon className="w-4 h-4" />
+                <div key={idx} className="flex items-start gap-1.5 sm:gap-3.5 p-2 sm:p-4 rounded-xl sm:rounded-2xl bg-zinc-950/15 border border-zinc-900 text-left">
+                  <div className={`w-5 h-5 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl border flex items-center justify-center shrink-0 mt-0.5 ${prop.color}`}>
+                    <PropIcon className="w-2.5 h-2.5 sm:w-4 sm:h-4" />
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-white font-display">{prop.title}</h4>
-                    <p className="text-sm text-zinc-400 mt-1 font-light leading-relaxed">{prop.desc}</p>
+                    <h4 className="text-[8px] sm:text-xs md:text-base font-bold text-white font-display leading-tight">{prop.title}</h4>
+                    <p className="text-[7px] sm:text-[10px] md:text-sm text-zinc-400 mt-0.5 sm:mt-1 font-light leading-relaxed truncate sm:whitespace-normal">{prop.desc}</p>
                   </div>
                 </div>
               );
@@ -927,81 +927,80 @@ export default function SynosPage({ onBack, onContactClick }) {
           </div>
         </section>
 
-        {/* CHAPTER 1: WHY SYNOS EXISTS */}
         <section 
           ref={sectionRefs.why}
-          className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto"
+          className="snap-start md:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-10 md:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             
-            <div className="lg:col-span-5 text-left">
-              <span className="text-base text-violet-400 font-mono uppercase tracking-[0.2em]">Why Syn<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">OS</span></span>
-              <h2 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight mt-2 mb-6">
+            <div className="col-span-12 lg:col-span-5 text-left">
+              <span className="text-xs sm:text-base text-violet-400 font-mono uppercase tracking-[0.2em]">Why Syn<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">OS</span></span>
+              <h2 className="font-display font-bold text-lg sm:text-3xl md:text-5xl text-white tracking-tight mt-1 sm:mt-2 mb-2 sm:mb-6 leading-none">
                 Operational Silence
               </h2>
-              <p className="text-zinc-400 font-light leading-relaxed text-lg mb-6 max-w-xl">
+              <p className="text-zinc-400 font-light leading-relaxed text-xs sm:text-base lg:text-lg mb-2 sm:mb-6 max-w-xl">
                 Legacy software keeps departments locked in static databases. Reception has no visibility into lab backlogs. Technicians process scans without payment validation. Management finds leakages weeks too late.
               </p>
-              <p className="text-zinc-300 font-light leading-relaxed text-lg max-w-xl">
+              <p className="text-zinc-300 font-light leading-relaxed text-xs sm:text-base lg:text-lg max-w-xl">
                 Syn<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">OS</span> connects the clinic into a single reactive city. A transaction in one room immediately updates queues and balances across the entire organization.
               </p>
             </div>
 
             {/* Split Comparison Diagram - Cause and Effect instead of paragraphs */}
-            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            <div className="col-span-12 lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full">
               
               {/* SILENCE */}
-              <div className="rounded-3xl border border-red-950/20 bg-red-950/5 p-6 relative flex flex-col justify-between min-h-[380px]">
-                <div className="text-sm font-mono text-red-400 tracking-wider select-none uppercase mb-4">
-                  Legacy / Fragmented Silos ❌
+              <div className="rounded-2xl md:rounded-3xl border border-red-950/20 bg-red-950/5 p-4 sm:p-6 relative flex flex-col justify-between min-h-[200px] sm:min-h-[260px] lg:min-h-[380px]">
+                <div className="text-xs sm:text-sm font-mono text-red-400 tracking-wider select-none uppercase mb-2 sm:mb-4">
+                  Legacy Silos ❌
                 </div>
 
-                <div className="space-y-3 flex-1 flex flex-col justify-center">
+                <div className="space-y-2 sm:space-y-3 flex-1 flex flex-col justify-center">
                   {[
                     { node: 'Reception', err: 'Cannot check lab workbench backlogs.' },
                     { node: 'Pathology', err: 'Processes samples with no billing validation checks.' },
                     { node: 'Radiology', err: 'Scans studies without updating PACS report signatures.' }
                   ].map((s, idx) => (
-                    <div key={idx} className="p-3.5 rounded-xl bg-zinc-950/45 border border-red-900/15 flex items-start gap-3">
+                    <div key={idx} className="p-2 sm:p-2.5 md:p-3.5 rounded bg-zinc-950/45 border border-red-900/15 flex items-start gap-2 sm:gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-1.5" />
-                      <div className="text-left">
-                        <div className="text-sm font-bold text-red-200">{s.node}</div>
-                        <div className="text-sm text-zinc-400 mt-1">{s.err}</div>
+                      <div className="text-left leading-none">
+                        <div className="text-xs sm:text-sm font-bold text-red-200">{s.node}</div>
+                        <div className="text-[10px] sm:text-xs text-zinc-455 mt-0.5 sm:mt-1 truncate max-w-[120px] sm:max-w-none">{s.err}</div>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="text-sm text-zinc-400 font-mono text-center border-t border-zinc-900 pt-3">
+                <div className="text-[10px] sm:text-xs text-zinc-400 font-mono text-center border-t border-zinc-900 pt-2 sm:pt-3">
                   Average 8% referral payouts leakage
                 </div>
               </div>
 
               {/* SYNOS LOOP */}
-              <div className="rounded-3xl border border-violet-950/20 bg-violet-950/5 p-6 relative flex flex-col justify-between min-h-[380px]">
-                <div className="text-sm font-mono text-violet-400 tracking-wider select-none uppercase mb-4">
-                  Syn<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">OS</span> Event Loop ✔
+              <div className="rounded-2xl md:rounded-3xl border border-violet-950/20 bg-violet-950/5 p-4 sm:p-6 relative flex flex-col justify-between min-h-[200px] sm:min-h-[260px] lg:min-h-[380px]">
+                <div className="text-xs sm:text-sm font-mono text-violet-400 tracking-wider select-none uppercase mb-2 sm:mb-4">
+                  Syn<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">OS</span> Loop ✔
                 </div>
 
-                <div className="space-y-3 flex-1 flex flex-col justify-center">
+                <div className="space-y-2 sm:space-y-3 flex-1 flex flex-col justify-center">
                   {[
                     { step: 'Patient Registered', action: 'Reception MRN generated' },
                     { step: 'Billing Verification', action: 'Unlocks Phlebotomy draw list' },
                     { step: 'Reagent IMS Auto-Deduct', action: 'Calculates shelf stocks' }
                   ].map((s, idx) => (
-                    <div key={idx} className="p-3.5 rounded-xl bg-zinc-950/80 border border-violet-900/25 flex items-start gap-3 relative overflow-hidden">
+                    <div key={idx} className="p-2 sm:p-2.5 md:p-3.5 rounded bg-zinc-950/80 border border-violet-900/25 flex items-start gap-2 sm:gap-3 relative overflow-hidden">
                       <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0 mt-1.5 animate-pulse" />
-                      <div className="text-left">
-                        <div className="text-sm font-bold text-white">{s.step}</div>
-                        <div className="text-sm text-violet-400 mt-1">{s.action}</div>
+                      <div className="text-left leading-none">
+                        <div className="text-xs sm:text-sm font-bold text-white">{s.step}</div>
+                        <div className="text-[10px] sm:text-xs text-violet-400 mt-0.5 sm:mt-1 truncate max-w-[120px] sm:max-w-none">{s.action}</div>
                       </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-violet-500/40 absolute right-3 top-1/2 -translate-y-1/2" />
+                      <ChevronRight className="w-3.5 h-3.5 text-violet-500/40 absolute right-2 sm:right-3 top-1/2 -translate-y-1/2" />
                     </div>
                   ))}
                 </div>
 
-                <div className="text-sm text-violet-400 font-mono text-center border-t border-zinc-900 pt-3 flex items-center justify-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 animate-pulse" /> Real-time SignalR loop active
+                <div className="text-[10px] sm:text-xs text-violet-400 font-mono text-center border-t border-zinc-900 pt-2 sm:pt-3 flex items-center justify-center gap-1">
+                  <Activity className="w-3.5 h-3.5 animate-pulse" /> SignalR active
                 </div>
               </div>
 
@@ -1013,21 +1012,21 @@ export default function SynosPage({ onBack, onContactClick }) {
         {/* EXPERIENCE 2: RUN A PATIENT (MINIATURE CITY SIMULATION) */}
         <section 
           ref={sectionRefs.journey}
-          className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
+          className="snap-start md:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-10 md:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-16">
-            <div className="lg:col-span-8">
-              <span className="text-sm text-violet-400 font-mono uppercase tracking-[0.2em]">Experience 02</span>
-              <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight mt-2 mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end mb-8 sm:mb-16">
+            <div className="col-span-12 lg:col-span-8">
+              <span className="text-xs sm:text-sm text-violet-400 font-mono uppercase tracking-[0.2em]">Experience 02</span>
+              <h2 className="font-display font-bold text-lg sm:text-3xl md:text-5xl text-white tracking-tight mt-1 sm:mt-2 mb-1 sm:mb-4 leading-none">
                 Patient Flow Simulator
               </h2>
-              <p className="text-zinc-400 font-light leading-relaxed text-base sm:text-lg">
-                Click **START VISIT** or **STEP** to watch a patient token flow across the organization in real-time. Watch queues increment, stock deduct, and WhatsApp release final reports.
+              <p className="text-zinc-400 font-light leading-relaxed text-xs sm:text-base lg:text-lg mt-1">
+                Click **START VISIT** or **STEP** to watch a patient token flow across the organization in real-time.
               </p>
             </div>
             
             {/* Simulation Controller Console */}
-            <div className="lg:col-span-4 p-4 rounded-2xl border border-zinc-900 bg-zinc-950/80 flex flex-col gap-3">
+            <div className="col-span-12 lg:col-span-4 p-4 rounded-2xl border border-zinc-900 bg-zinc-950/80 flex flex-col gap-2 sm:gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono text-violet-400 font-bold uppercase tracking-wider flex items-center gap-1">
                   <Cpu className="w-3.5 h-3.5 animate-pulse" />
@@ -1044,29 +1043,29 @@ export default function SynosPage({ onBack, onContactClick }) {
                 {simPlaying ? (
                   <button 
                     onClick={stopSimulation}
-                    className="flex-1 py-1.5 rounded-lg bg-zinc-900 border border-zinc-850 text-xs font-mono font-bold text-zinc-300 hover:bg-zinc-800 flex items-center justify-center gap-1.5 cursor-pointer border-none"
+                    className="flex-1 py-1.5 rounded-lg bg-zinc-900 border border-zinc-855 text-[10px] sm:text-xs font-mono font-bold text-zinc-300 hover:bg-zinc-800 flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer border-none"
                   >
-                    <Pause className="w-3 h-3" /> PAUSE
+                    <Pause className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> PAUSE
                   </button>
                 ) : (
                   <button 
                     onClick={simStep === null ? startSimulation : () => setSimPlaying(true)}
-                    className="flex-1 py-1.5 rounded-lg bg-violet-650 hover:bg-violet-600 text-xs font-mono font-bold text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-violet-500/10 border-none"
+                    className="flex-1 py-1.5 rounded-lg bg-violet-650 hover:bg-violet-600 text-[10px] sm:text-xs font-mono font-bold text-white flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-lg shadow-violet-500/10 border-none"
                   >
-                    <Play className="w-3 h-3" /> {simStep === null ? 'START VISIT' : 'RESUME'}
+                    <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> {simStep === null ? 'START' : 'RESUME'}
                   </button>
                 )}
 
                 <button 
                   onClick={handleNextSimStep}
-                  className="py-1.5 px-3 rounded-lg bg-zinc-900 border border-zinc-850 text-xs font-mono font-bold text-zinc-300 hover:bg-zinc-800 flex items-center justify-center gap-1 cursor-pointer border-none"
+                  className="py-1.5 px-2.5 sm:px-3 rounded-lg bg-zinc-900 border border-zinc-855 text-[10px] sm:text-xs font-mono font-bold text-zinc-300 hover:bg-zinc-800 flex items-center justify-center gap-1 cursor-pointer border-none"
                 >
-                  STEP <ArrowRight className="w-3 h-3" />
+                  STEP <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 </button>
 
                 <button 
                   onClick={resetSimulation}
-                  className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-850 text-zinc-400 hover:text-white cursor-pointer border-none"
+                  className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-855 text-zinc-400 hover:text-white cursor-pointer border-none flex items-center justify-center"
                   title="Reset"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
@@ -1076,10 +1075,10 @@ export default function SynosPage({ onBack, onContactClick }) {
           </div>
 
           {/* City simulation metrics & layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
             {/* Left: Simulation progress steps */}
-            <div className="lg:col-span-8 space-y-3">
+            <div className="col-span-12 lg:col-span-8 space-y-3">
               <div className="p-4 rounded-xl border border-zinc-900 bg-zinc-950/65 font-mono text-xs relative overflow-hidden">
                 <div className="absolute inset-0 bg-dot-pattern opacity-10 pointer-events-none" />
                 <div className="text-xs text-zinc-450 uppercase tracking-widest mb-3 flex items-center justify-between z-10 relative">
@@ -1097,7 +1096,7 @@ export default function SynosPage({ onBack, onContactClick }) {
               </div>
 
               {/* Progress step bar cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {[
                   { step: 0, node: 'reception', label: '01. Reception', desc: 'Registers patient visit & select billed tests.' },
                   { step: 3, node: 'workbench', label: '02. Laboratory', desc: 'Analyzer outputs parameter logs automatically.' },
@@ -1114,19 +1113,19 @@ export default function SynosPage({ onBack, onContactClick }) {
                         setActiveNode(s.node);
                         setSimLog(prev => [`[Manual Override] Inspected ${s.label} console.`, ...prev]);
                       }}
-                      className={`p-4 rounded-xl border text-left transition-all duration-300 cursor-pointer border-none ${
+                      className={`p-3 lg:p-4 rounded-xl bg-zinc-950/25 border text-left transition-all duration-300 cursor-pointer border-none flex flex-col justify-between ${
                         isActive 
-                          ? 'border-violet-500 bg-violet-950/10 text-white' 
+                          ? 'border-violet-500 bg-violet-950/10 text-white font-semibold' 
                           : isPassed 
                             ? 'border-zinc-800 bg-zinc-900/10 text-zinc-300' 
                             : 'border-zinc-900 bg-zinc-950/20 text-zinc-550'
                       }`}
                     >
-                      <div className="text-xs font-bold flex items-center justify-between">
-                        <span>{s.label}</span>
-                        {isPassed && <Check className="w-3 h-3 text-violet-400" />}
+                      <div className="text-xs font-bold flex items-center justify-between w-full">
+                        <span>{s.label.split(' ')[1]}</span>
+                        {isPassed && <Check className="w-3 h-3 text-violet-400 shrink-0" />}
                       </div>
-                      <p className="text-xs text-zinc-450 font-light leading-relaxed mt-2">{s.desc}</p>
+                      <p className="text-[10px] sm:text-xs text-zinc-500 font-light leading-relaxed mt-1.5 sm:mt-2">{s.desc}</p>
                     </button>
                   );
                 })}
@@ -1134,24 +1133,23 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
 
             {/* Right: Simulation dashboard overview */}
-            <div className="lg:col-span-4 space-y-4">
-              <div className="p-6 rounded-3xl border border-zinc-900 bg-zinc-950/50 backdrop-blur-sm text-left">
+            <div className="col-span-12 lg:col-span-4 space-y-4">
+              <div className="p-4 sm:p-6 rounded-2xl md:rounded-3xl border border-zinc-900 bg-zinc-950/50 backdrop-blur-sm text-left">
                 <span className="text-xs font-mono uppercase tracking-widest text-zinc-500 block mb-4">
                   SIMULATION TELEMETRY
                 </span>
-
-                <div className="space-y-4">
-                  <div className="p-3 bg-zinc-900/40 border border-zinc-900 rounded-xl">
-                    <span className="text-xs text-zinc-450 block font-mono">GROSS CASH SALES:</span>
-                    <span className="text-xl font-mono font-bold text-white">{simStats.revenue}</span>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="p-2 sm:p-3 bg-zinc-900/40 border border-zinc-900 rounded-xl">
+                    <span className="text-[10px] sm:text-xs text-zinc-450 block font-mono">GROSS SALES:</span>
+                    <span className="text-sm sm:text-xl font-mono font-bold text-white">{simStats.revenue}</span>
                   </div>
-                  <div className="p-3 bg-zinc-900/40 border border-zinc-900 rounded-xl">
-                    <span className="text-xs text-zinc-450 block font-mono">VISIT TAT GAUGE:</span>
-                    <span className="text-xl font-mono font-bold text-violet-400">{simStats.tat}</span>
+                  <div className="p-2 sm:p-3 bg-zinc-900/40 border border-zinc-900 rounded-xl">
+                    <span className="text-[10px] sm:text-xs text-zinc-450 block font-mono">VISIT TAT:</span>
+                    <span className="text-sm sm:text-xl font-mono font-bold text-violet-400">{simStats.tat}</span>
                   </div>
-                  <div className="p-3 bg-zinc-900/40 border border-zinc-900 rounded-xl">
-                    <span className="text-xs text-zinc-450 block font-mono">SMART IMS REAGENTS:</span>
-                    <span className="text-xl font-mono font-bold text-emerald-400">{simStats.inventory}</span>
+                  <div className="p-2 sm:p-3 bg-zinc-900/40 border border-zinc-900 rounded-xl">
+                    <span className="text-[10px] sm:text-xs text-zinc-450 block font-mono">REAGENT IMS:</span>
+                    <span className="text-sm sm:text-xl font-mono font-bold text-emerald-400">{simStats.inventory}</span>
                   </div>
                 </div>
               </div>
@@ -1160,10 +1158,9 @@ export default function SynosPage({ onBack, onContactClick }) {
           </div>
         </section>
 
-        {/* EXPERIENCE 3: PATHOLOGY LAB ENGINE */}
         <section 
           ref={sectionRefs.pathology}
-          className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
+          className="snap-start lg:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-10 lg:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-16">
             <div className="lg:col-span-8">
@@ -1292,9 +1289,9 @@ export default function SynosPage({ onBack, onContactClick }) {
         {/* EXPERIENCE 4: RADIOLOGY SUITE */}
         <section 
           ref={sectionRefs.radiology}
-          className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
+          className="snap-start lg:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-10 lg:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
         >
-          <div className="w-full mb-16">
+          <div className="w-full mb-8 lg:mb-16">
             <span className="text-sm text-violet-400 font-mono uppercase tracking-[0.2em]">Experience 04</span>
             <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight mt-2 mb-4">
               Radiology Suite
@@ -1304,10 +1301,10 @@ export default function SynosPage({ onBack, onContactClick }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
             
             {/* Scan Worklist (Left) */}
-            <div className="lg:col-span-4 p-5 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between">
+            <div className="col-span-1 p-5 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-zinc-900 mb-4">
                   <span className="text-xs font-mono text-zinc-450 uppercase tracking-wider">Modality Scan Queue</span>
@@ -1346,11 +1343,11 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
 
             {/* PACS Server Pipeline Animation (Center) */}
-            <div className="lg:col-span-4 p-5 rounded-3xl border border-zinc-900 bg-zinc-950/60 flex flex-col justify-between relative overflow-hidden">
+            <div className="col-span-1 p-5 rounded-3xl border border-zinc-900 bg-zinc-950/60 flex flex-col justify-between relative overflow-hidden">
               <div className="absolute inset-0 bg-dot-pattern opacity-10 pointer-events-none" />
               
               <div>
-                <div className="text-xs font-mono text-zinc-450 uppercase tracking-widest mb-4">PACS Server Repository Node</div>
+                <div className="text-xs font-mono text-zinc-455 uppercase tracking-widest mb-4">PACS Server Repository Node</div>
                 
                 <div className="h-44 border border-zinc-850 rounded-xl bg-zinc-950 flex flex-col items-center justify-center relative">
                   
@@ -1365,8 +1362,8 @@ export default function SynosPage({ onBack, onContactClick }) {
                     </div>
                   ) : radiologyStage === 'pacs' || radiologyStage === 'dictated' ? (
                     <div className="flex flex-col items-center gap-2">
-                      <Database className="w-8 h-8 text-pink-450 text-pink-400 animate-bounce" />
-                      <div className="text-xs font-mono text-emerald-450 text-emerald-400 font-bold">
+                      <Database className="w-8 h-8 text-pink-455 text-pink-450 text-pink-400 animate-bounce" />
+                      <div className="text-xs font-mono text-emerald-455 text-emerald-400 font-bold">
                         STUDY SYNCED [PACS]
                       </div>
                       <span className="text-xs text-zinc-500 font-mono">UID: 1.2.840.11361.2291</span>
@@ -1405,10 +1402,10 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
 
             {/* Radiologist Workspace & Dictation Output (Right) */}
-            <div className="lg:col-span-4 p-5 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between">
+            <div className="col-span-1 p-5 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-zinc-900 mb-4">
-                  <span className="text-xs font-mono text-zinc-450 uppercase tracking-wider">Radiologist Diagnostician Workspace</span>
+                  <span className="text-xs font-mono text-zinc-450 uppercase tracking-wider">Radiologist Workspace</span>
                   <span className="px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono text-zinc-400">Viewer active</span>
                 </div>
 
@@ -1471,13 +1468,12 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
           </div>
         </section>
-
         {/* EXPERIENCE 5: BUSINESS OPERATIONS & SMART IMS ENGINE */}
         <section 
           ref={sectionRefs.business}
-          className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
+          className="snap-start lg:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-10 lg:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end mb-8 lg:mb-16">
             <div className="lg:col-span-8">
               <span className="text-sm text-violet-400 font-mono uppercase tracking-[0.2em]">Experience 05</span>
               <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight mt-2 mb-4">
@@ -1489,7 +1485,7 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
             
             {/* Slider */}
-            <div className="lg:col-span-4 p-4 rounded-2xl border border-zinc-900 bg-zinc-950/80 flex flex-col gap-2 shadow-xl">
+            <div className="lg:col-span-4 p-4 rounded-2xl border border-zinc-900 bg-zinc-950/80 flex flex-col gap-2 shadow-xl w-full">
               <span className="text-xs font-mono text-zinc-450 uppercase tracking-widest">
                 processed tests volume simulator
               </span>
@@ -1509,10 +1505,10 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             
             {/* Smart IMS Reagent stock decrements (Card 1) */}
-            <div className="p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between group">
+            <div className="p-4 sm:p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between group">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-xs font-mono text-zinc-500 uppercase block">Smart IMS Core</span>
@@ -1558,11 +1554,11 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
 
             {/* Expense Feed ledger credit logs (Card 2) */}
-            <div className="p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between group">
+            <div className="p-4 sm:p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between group">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-xs font-mono text-zinc-500 uppercase block">FINANCIAL LEDGER</span>
-                  <TrendingUp className="w-4 h-4 text-emerald-450 text-emerald-400" />
+                  <TrendingUp className="w-4 h-4 text-emerald-455 text-emerald-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Expense Feed ledger</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed font-light mb-4">
@@ -1602,7 +1598,7 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
 
             {/* HR Exception payroll releases (Card 3) */}
-            <div className="p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between group">
+            <div className="p-4 sm:p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between group">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-xs font-mono text-zinc-500 uppercase block">HR EXCEPTIONS</span>
@@ -1644,23 +1640,22 @@ export default function SynosPage({ onBack, onContactClick }) {
                 </div>
               </div>
             </div>
-
           </div>
         </section>
 
         {/* EXPERIENCE 6: DIRECTOR COMMAND CENTER (THE GRAND FINALE) */}
         <section 
           ref={sectionRefs.director}
-          className="snap-start min-h-screen relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-20 px-8 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
+          className="snap-start lg:min-h-screen min-h-0 relative z-10 scroll-mt-16 w-full flex flex-col justify-center py-10 lg:py-20 px-4 md:px-16 lg:px-24 xl:px-32 border-b border-zinc-900 max-w-full mx-auto text-left"
         >
-          <div className="w-full text-center mb-16">
-            <span className="text-sm text-violet-400 font-mono uppercase tracking-[0.25em] bg-violet-950/20 border border-violet-900/40 px-4 py-1.5 rounded-full mb-4 inline-block">
+          <div className="w-full text-center mb-8 lg:mb-16">
+            <span className="text-xs sm:text-sm text-violet-400 font-mono uppercase tracking-[0.25em] bg-violet-950/20 border border-violet-900/40 px-4 py-1.5 rounded-full mb-2 sm:mb-4 inline-block">
               Experience 06 // The Grand Finale
             </span>
-            <h2 className="font-display font-extrabold text-4xl sm:text-6xl text-white tracking-tight leading-none">
+            <h2 className="font-display font-extrabold text-2xl sm:text-4xl lg:text-6xl text-white tracking-tight leading-none">
               Director Command Center
             </h2>
-            <p className="text-zinc-400 font-light leading-relaxed max-w-3xl mx-auto mt-4 text-base sm:text-lg">
+            <p className="text-zinc-400 font-light leading-relaxed max-w-3xl mx-auto mt-2 lg:mt-4 text-sm sm:text-base lg:text-lg">
               The operational nerve center where Operations, Pathology, Radiology, Smart IMS, and Payroll converge in a consolidated dashboard.
             </p>
           </div>
@@ -1668,9 +1663,9 @@ export default function SynosPage({ onBack, onContactClick }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             
             {/* Left controls */}
-            <div className="lg:col-span-4 p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between">
+            <div className="lg:col-span-4 p-4 sm:p-6 rounded-3xl border border-zinc-900 bg-zinc-950/40 flex flex-col justify-between">
               <div>
-                <span className="text-xs font-mono text-zinc-450 uppercase tracking-widest block mb-4">
+                <span className="text-xs font-mono text-zinc-455 uppercase tracking-widest block mb-4">
                   Dashboard Audits filter
                 </span>
                 
@@ -1683,7 +1678,7 @@ export default function SynosPage({ onBack, onContactClick }) {
                     <button
                       key={filter.id}
                       onClick={() => setDirectorFilter(filter.id)}
-                      className={`w-full p-4 rounded-xl border text-left text-xs font-bold uppercase transition-all cursor-pointer flex items-center justify-between border-none ${
+                      className={`w-full p-3.5 sm:p-4 rounded-xl border text-left text-xs font-bold uppercase transition-all cursor-pointer flex items-center justify-between border-none ${
                         directorFilter === filter.id 
                           ? 'border-violet-500 bg-violet-950/15 text-white font-semibold shadow-md' 
                           : 'border-zinc-850 bg-zinc-900/10 text-zinc-400 hover:border-zinc-800'
@@ -1696,7 +1691,7 @@ export default function SynosPage({ onBack, onContactClick }) {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl border border-violet-900/10 bg-violet-950/5 mt-8 flex items-start gap-3">
+              <div className="p-3.5 sm:p-4 rounded-xl border border-violet-900/10 bg-violet-950/5 mt-4 lg:mt-8 flex items-start gap-3">
                 <Sparkles className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
                 <p className="text-xs text-zinc-400 leading-relaxed font-light font-sans">
                   The dashboard displays clinic delays and revenues dynamically, preventing administration leaks without needing manager phone calls.
@@ -1705,11 +1700,11 @@ export default function SynosPage({ onBack, onContactClick }) {
             </div>
 
             {/* Right: Massive consolidated dashboard mock */}
-            <div className="lg:col-span-8 p-6 rounded-3xl border border-zinc-900 bg-zinc-950/50 backdrop-blur-sm relative overflow-hidden flex flex-col justify-between min-h-[460px]">
+            <div className="lg:col-span-8 p-4 sm:p-6 rounded-3xl border border-zinc-900 bg-zinc-950/50 backdrop-blur-sm relative overflow-hidden flex flex-col justify-between min-h-0 lg:min-h-[460px]">
               
               <div>
-                <div className="flex justify-between items-center pb-4 border-b border-zinc-900 mb-6">
-                  <span className="text-xs font-mono text-zinc-450 uppercase tracking-widest flex items-center gap-1.5">
+                <div className="flex justify-between items-center pb-3 lg:pb-4 border-b border-zinc-900 mb-4 lg:mb-6">
+                  <span className="text-xs font-mono text-zinc-455 uppercase tracking-widest flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
                     DIRECTOR LIVE AUDIT FEED
                   </span>
@@ -1720,7 +1715,7 @@ export default function SynosPage({ onBack, onContactClick }) {
                   
                   {/* Gauge Card 1 */}
                   <div className="p-4 rounded-xl border border-zinc-850 bg-zinc-950 text-left">
-                    <span className="text-xs font-mono text-zinc-450 block mb-1">CLINIC TURNAROUND TIME (TAT):</span>
+                    <span className="text-xs font-mono text-zinc-455 block mb-1">CLINIC TURNAROUND TIME (TAT):</span>
                     <div className="flex items-baseline gap-2 mt-1">
                       <span className={`text-2xl font-mono font-extrabold ${directorFilter === 'delay' ? 'text-red-400 animate-pulse' : 'text-white'}`}>
                         {directorFilter === 'delay' ? '56.2 min' : '42.0 min'}
@@ -1739,16 +1734,16 @@ export default function SynosPage({ onBack, onContactClick }) {
 
                   {/* Gauge Card 2 */}
                   <div className="p-4 rounded-xl border border-zinc-850 bg-zinc-950 text-left">
-                    <span className="text-xs font-mono text-zinc-450 block mb-1">COMMISSION ALLOCATIONS:</span>
+                    <span className="text-xs font-mono text-zinc-455 block mb-1">COMMISSION ALLOCATIONS:</span>
                     <div className="flex items-baseline gap-2 mt-1">
                       <span className="text-2xl font-mono font-extrabold text-white">
                         {directorFilter === 'b2b' ? '3,490.00' : '1,720.00'}
                       </span>
-                      <span className="text-xs font-mono text-zinc-450 text-zinc-500">reconciled B2B</span>
+                      <span className="text-xs font-mono text-zinc-500">reconciled B2B</span>
                     </div>
                     
                     {directorFilter === 'b2b' && (
-                      <div className="mt-3 p-2.5 bg-violet-950/15 border border-violet-900/30 rounded text-xs text-zinc-400 font-mono">
+                      <div className="mt-3 p-2.5 bg-violet-950/15 border border-violet-900/30 rounded text-xs text-zinc-450 font-mono">
                         📊 Top referred: Dr. Ravi S. (850 cash credit, 120 biochemical panels).
                       </div>
                     )}
@@ -1758,8 +1753,8 @@ export default function SynosPage({ onBack, onContactClick }) {
               </div>
 
               {/* director screen supporting evidence */}
-              <div className="mt-8 border-t border-zinc-900 pt-4 relative group">
-                <span className="text-xs text-zinc-450 uppercase font-mono block mb-2 text-left">PRODUCTION CONSOLIDATED EXECUTIVE KPI PANEL</span>
+              <div className="mt-4 lg:mt-8 border-t border-zinc-900 pt-4 relative group">
+                <span className="text-xs text-zinc-455 uppercase font-mono block mb-2 text-left">PRODUCTION CONSOLIDATED EXECUTIVE KPI PANEL</span>
                 <div className="relative aspect-[16/7] rounded-xl overflow-hidden bg-zinc-900 border border-zinc-850">
                   <img 
                     src={directorDashboardImg} 
@@ -1782,7 +1777,7 @@ export default function SynosPage({ onBack, onContactClick }) {
           </div>
 
           {/* FOOTER ACCENT */}
-          <footer className="mt-28 border-t border-zinc-900 py-12 text-center text-xs text-zinc-550 font-mono w-full">
+          <footer className="mt-12 lg:mt-28 border-t border-zinc-900 py-12 text-center text-xs text-zinc-550 font-mono w-full">
             <p className="mb-2">Syn<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">OS</span> is developed and engineered by TBZ Labs.</p>
             <p>© 2026 TBZ Labs. All rights reserved.</p>
           </footer>
