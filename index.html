@@ -26,6 +26,79 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.tbzlabs.in/#organization",
+          "name": "TBZ Labs",
+          "url": "https://www.tbzlabs.in",
+          "logo": "https://www.tbzlabs.in/assets/logo.png",
+          "founder": {
+            "@type": "Person",
+            "name": "Tabrez Shaik"
+          },
+          "description": "Custom software development studio building operational systems for healthcare, retail, hospitality, and education."
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://www.tbzlabs.in/synos/#software",
+          "name": "SynOS",
+          "applicationCategory": "BusinessApplication",
+          "applicationSubCategory": "Diagnostic Lab Operating System",
+          "creator": {
+            "@id": "https://www.tbzlabs.in/#organization"
+          },
+          "url": "https://www.tbzlabs.in/synos",
+          "description": "Diagnostic Lab Operating System designed for pathology, radiology, reception, finance, inventory, and executive operations."
+        },
+        {
+          "@type": "Service",
+          "name": "Custom Software Development",
+          "provider": {
+            "@id": "https://www.tbzlabs.in/#organization"
+          },
+          "description": "Custom operational software designed to automate and scale business workflows."
+        },
+        {
+          "@type": "Service",
+          "name": "Healthcare Software Development",
+          "provider": {
+            "@id": "https://www.tbzlabs.in/#organization"
+          },
+          "description": "HIPAA-compliant custom medical, diagnostic, and clinical software solutions."
+        },
+        {
+          "@type": "Service",
+          "name": "POS Systems",
+          "provider": {
+            "@id": "https://www.tbzlabs.in/#organization"
+          },
+          "description": "Custom POS development built for retail, multi-outlet pharmacies, and restaurant chains."
+        },
+        {
+          "@type": "Service",
+          "name": "Workflow Automation",
+          "provider": {
+            "@id": "https://www.tbzlabs.in/#organization"
+          },
+          "description": "Integration and automation pipelines to streamline complex operational procedures."
+        },
+        {
+          "@type": "Service",
+          "name": "ERP Development",
+          "provider": {
+            "@id": "https://www.tbzlabs.in/#organization"
+          },
+          "description": "Internal business operating systems, resource planning, and inventory control platforms."
+        }
+      ]
+    }
+    </script>
   </head>
   <body class="bg-[#030303] text-zinc-100 font-sans antialiased min-h-screen selection:bg-violet-500/30 selection:text-white">
     <div id="root"></div>
