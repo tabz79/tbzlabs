@@ -212,17 +212,17 @@ function MobileAppsVisual() {
         <div className="w-8 h-1.5 rounded-full bg-zinc-900 absolute top-1 left-1/2 -translate-x-1/2" />
         
         {/* Ticket / Order details mock */}
-        <div className="flex-1 flex flex-col justify-center gap-1.5 mt-2">
-          <div className="h-2.5 rounded bg-zinc-900 border border-zinc-850 flex items-center justify-between px-1 text-[6px]">
-            <span className="text-zinc-400">Order #4829</span>
-            <span className="text-cyan-400 font-bold">$45.00</span>
+        <div className="flex-1 flex flex-col justify-center gap-1 mt-2">
+          <div className="h-4 rounded bg-zinc-900 border border-zinc-850 flex items-center justify-between px-1.5 text-[6.5px] leading-none whitespace-nowrap">
+            <span className="text-zinc-400">#4829</span>
+            <span className="text-cyan-400 font-bold">45.00</span>
           </div>
-          <div className="h-2.5 rounded bg-zinc-900 border border-zinc-850 flex items-center justify-between px-1 text-[6px]">
-            <span className="text-zinc-400">Lab SYN-042</span>
+          <div className="h-4 rounded bg-zinc-900 border border-zinc-850 flex items-center justify-between px-1.5 text-[6.5px] leading-none whitespace-nowrap">
+            <span className="text-zinc-400">SYN-042</span>
             <span className="text-violet-400 font-bold">Done</span>
           </div>
-          <div className="h-2.5 rounded bg-zinc-900 border border-zinc-850 flex items-center justify-between px-1 text-[6px]">
-            <span className="text-zinc-400">Checkin Table 4</span>
+          <div className="h-4 rounded bg-zinc-900 border border-zinc-850 flex items-center justify-between px-1.5 text-[6.5px] leading-none whitespace-nowrap">
+            <span className="text-zinc-400">Table 4</span>
             <span className="text-emerald-400 font-bold">12:30</span>
           </div>
         </div>
