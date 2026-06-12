@@ -135,14 +135,12 @@ export default function SystemsBuilt({ onExploreSynos, onContactClick }) {
                   {project.frameType === 'desktop' && (
                     <div className="w-full h-full flex flex-col justify-end relative">
                       {/* Browser Header */}
-                      <div className="absolute top-0 left-0 right-0 h-8 bg-zinc-950 border-b border-zinc-900 px-4 flex items-center justify-between z-20">
+                      <div className="absolute top-0 left-0 right-0 h-8 bg-zinc-950 border-b border-zinc-900 px-4 flex items-center justify-start gap-3 z-20">
                         <div className="flex gap-1.5">
                           <span className="w-2 h-2 rounded-full bg-zinc-800" />
                           <span className="w-2 h-2 rounded-full bg-zinc-800" />
                           <span className="w-2 h-2 rounded-full bg-zinc-800" />
                         </div>
-                        <span className="text-[9px] text-zinc-650 font-mono select-none">{project.title.toLowerCase()}.tbzlabs.com</span>
-                        <div className="w-6" />
                       </div>
                       
                       {/* Desktop Image */}
@@ -251,13 +249,28 @@ export default function SystemsBuilt({ onExploreSynos, onContactClick }) {
 
                   {/* Action Link */}
                   {project.id === 'synos' ? (
-                    <button
+                    <motion.button
                       onClick={onExploreSynos}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-violet-600 hover:bg-violet-500 text-sm font-bold text-white transition-all duration-300 shadow-lg shadow-violet-500/20 hover:shadow-violet-500/30 border-none cursor-pointer mt-4 group/btn"
+                      animate={{
+                        scale: [1, 1.025, 1],
+                        boxShadow: [
+                          "0 10px 20px -5px rgba(139, 92, 246, 0.4), 0 0 0 0 rgba(139, 92, 246, 0.4)",
+                          "0 10px 20px -5px rgba(139, 92, 246, 0.4), 0 0 0 10px rgba(139, 92, 246, 0)",
+                          "0 10px 20px -5px rgba(139, 92, 246, 0.4), 0 0 0 0 rgba(139, 92, 246, 0)"
+                        ]
+                      }}
+                      transition={{
+                        duration: 2.2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-violet-650 hover:bg-violet-600 text-sm font-bold text-white transition-all duration-300 border-none cursor-pointer mt-4 group/btn"
                     >
                       <span>Click to know more</span>
-                      <ArrowUpRight className="w-4 h-4 group/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                    </button>
+                      <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                    </motion.button>
                   ) : project.id === 'restaurant' ? (
                     <a
                       href="https://miyabhai.in"
