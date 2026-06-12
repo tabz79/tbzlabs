@@ -10,6 +10,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import SynosPage from './components/SynosPage';
 import ContactOptionsModal from './components/ContactOptionsModal';
+import FAQ from './components/FAQ';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -122,6 +123,7 @@ function App() {
               <AboutStudio />
               <WhatWeBuild />
               <HowIWork />
+              <FAQ />
               <Contact />
             </main>
             <Footer onNavigate={handleNavigate} />
