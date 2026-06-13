@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import SynosPage from './components/SynosPage';
 import ContactOptionsModal from './components/ContactOptionsModal';
 import FAQ from './components/FAQ';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -149,6 +150,7 @@ function App() {
         context={contactModal.context}
         projectName={contactModal.projectName}
       />
+      <Analytics />
     </div>
   );
 }
