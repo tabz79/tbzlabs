@@ -27,7 +27,12 @@ import {
   Server,
   Cpu,
   HardDrive,
-  LogOut
+  LogOut,
+  Search,
+  Phone,
+  MapPin,
+  UserCheck,
+  X
 } from 'lucide-react';
 
 const CLOUD_API_BASE = 'https://cloud.tbzlabs.in';
@@ -66,111 +71,25 @@ export default function CloudPortal({ onBack }) {
     waDeliveredCount: 0,
     waReadCount: 0,
     waFailedCount: 0,
-    waSuccessRate: 98,
+    waSuccessRate: 0,
     topAreas: [],
     ageGroups: [],
     recentMessages: []
   });
 
-  // Operations / Labs State
-  const [labsList, setLabsList] = useState([
-    {
-      id: 'LAB001',
-      labName: 'Divya Diagnostics (Main Branch)',
-      tenantType: 'DiagnosticLab',
-      contactPerson: 'Dr. Ramesh Rao',
-      email: 'contact@divyadiagnostics.com',
-      phone: '+91 98480 12345',
-      licenseType: 'Commercial Enterprise',
-      maximumBranches: 5,
-      branchCount: 2,
-      expiryDate: '2027-03-31T00:00:00Z',
-      status: 'Online',
-      licenseStatus: 'Active',
-      activeVersion: 'v2.4.1',
-      osVersion: 'Microsoft Windows 11 Pro',
-      dotNetVersion: '.NET 8.0.12',
-      lastSeenAt: 'Just now',
-      latestSnapshot: {
-        cpuUsagePercent: 14.2,
-        memoryUsageMB: 480,
-        diskFreeSpaceGB: 182,
-        pendingOutboxCount: 0,
-        deadLetterCount: 0
-      }
-    },
-    {
-      id: 'cura-main-01',
-      labName: 'CuraOS Health Clinic (OPD & Pharmacy)',
-      tenantType: 'Clinic',
-      contactPerson: 'Dr. Sunita Sharma',
-      email: 'admin@curaclinic.in',
-      phone: '+91 98765 43210',
-      licenseType: 'Professional OPD',
-      maximumBranches: 2,
-      branchCount: 1,
-      expiryDate: '2027-04-15T00:00:00Z',
-      status: 'Online',
-      licenseStatus: 'Active',
-      activeVersion: 'v1.1.0',
-      osVersion: 'macOS Sonoma 14.6',
-      dotNetVersion: '.NET 8.0.12',
-      lastSeenAt: '2 mins ago',
-      latestSnapshot: {
-        cpuUsagePercent: 8.5,
-        memoryUsageMB: 310,
-        diskFreeSpaceGB: 340,
-        pendingOutboxCount: 0,
-        deadLetterCount: 0
-      }
-    }
-  ]);
+  // Operations / Labs State (Loaded dynamically from API)
+  const [labsList, setLabsList] = useState([]);
 
-  // Support Tickets State
-  const [tickets, setTickets] = useState([
-    {
-      id: 'TCK-8812',
-      labId: 'LAB001',
-      labName: 'Divya Diagnostics',
-      title: 'Barcode Scanner Timeout during Phlebotomy Draw',
-      description: 'Zebra DS2208 USB scanner disconnected intermittently after idle sleep mode.',
-      category: 'Device Hardware',
-      priority: 'Medium',
-      status: 'In Progress',
-      statusMessage: 'Driver patch queued for night maintenance window.',
-      createdAt: 'Today, 11:20 AM',
-      diagnosticBundleId: 'bun-7819',
-      diagnosticBundleStatus: 'Ready'
-    },
-    {
-      id: 'TCK-8809',
-      labId: 'cura-main-01',
-      labName: 'CuraOS Health Clinic',
-      title: 'Prescription PDF thermal printer margin offset',
-      description: 'Receipt printer ESC/POS cut lines truncated bottom 5mm of Doctor signature line.',
-      category: 'Printing',
-      priority: 'Low',
-      status: 'Resolved',
-      statusMessage: 'Fixed in printer profile v1.2 with bottom padding 8mm.',
-      createdAt: 'Yesterday, 04:45 PM',
-      diagnosticBundleId: 'bun-7802',
-      diagnosticBundleStatus: 'Ready'
-    },
-    {
-      id: 'TCK-8801',
-      labId: 'LAB001',
-      labName: 'Divya Diagnostics',
-      title: 'WhatsApp report delivery delayed for 2 patient numbers',
-      description: 'Meta Graph API returned status 131026 for unverified international roaming numbers.',
-      category: 'WhatsApp',
-      priority: 'High',
-      status: 'Resolved',
-      statusMessage: 'Patients re-notified with direct secure SMS link fallback.',
-      createdAt: '14 Sep 2026, 02:15 PM',
-      diagnosticBundleId: null,
-      diagnosticBundleStatus: 'Missing'
-    }
-  ]);
+  // Support Tickets State (Loaded dynamically from API)
+  const [tickets, setTickets] = useState([]);
+
+  // Patients Archive State (Live ledger from on-premise installation)
+  const [patientsList, setPatientsList] = useState([]);
+  const [patientSearchQuery, setPatientSearchQuery] = useState('');
+  const [patientGenderFilter, setPatientGenderFilter] = useState('ALL');
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [patientDetailsLoading, setPatientDetailsLoading] = useState(false);
+  const [patientDetails, setPatientDetails] = useState(null);
 
   // Modals & Action Feedback
   const [copiedKey, setCopiedKey] = useState(null);
@@ -259,68 +178,27 @@ export default function CloudPortal({ onBack }) {
     }
 
     if (!liveHost) {
-      setConnectionNotice('Control Tower running in offline cache mode. Verify Cloud Tunnel or port 5069 is live.');
-      // Set contextual defaults
-      if (tenantId === 'cura-main-01') {
-        setMetrics({
-          todayRevenue: 14500,
-          todayPatients: 29,
-          avgBill: 500,
-          waDeliveredCount: 42,
-          waReadCount: 38,
-          waFailedCount: 0,
-          waSuccessRate: 100,
-          topAreas: [
-            { location: 'Kukatpally, Hyderabad', count: 18, share: 62 },
-            { location: 'Miyapur, Hyderabad', count: 7, share: 24 },
-            { location: 'KPHB Colony', count: 4, share: 14 }
-          ],
-          ageGroups: [
-            { group: '19-35 yrs', count: 14, percent: '48%' },
-            { group: '36-50 yrs', count: 9, percent: '31%' },
-            { group: '51-65 yrs', count: 4, percent: '14%' },
-            { group: '66+ yrs', count: 2, percent: '7%' }
-          ],
-          recentMessages: [
-            { id: 'm-1', phone: '+91 98490 11223', patient: 'Ramesh Kumar', type: 'Prescription & Token', status: 'Delivered', time: '10 mins ago' },
-            { id: 'm-2', phone: '+91 97012 33445', patient: 'Sunita Devi', type: 'Appointment Reminder', status: 'Read', time: '25 mins ago' },
-            { id: 'm-3', phone: '+91 91234 56789', patient: 'Anand Rao', type: 'Consultation Slip', status: 'Delivered', time: '1 hr ago' }
-          ]
-        });
-      } else {
-        setMetrics({
-          todayRevenue: 28400,
-          todayPatients: 36,
-          avgBill: 788,
-          waDeliveredCount: 88,
-          waReadCount: 81,
-          waFailedCount: 1,
-          waSuccessRate: 98,
-          topAreas: [
-            { location: 'Banjara Hills, Hyderabad', count: 16, share: 44 },
-            { location: 'Jubilee Hills, Hyderabad', count: 12, share: 33 },
-            { location: 'Madhapur', count: 8, share: 23 }
-          ],
-          ageGroups: [
-            { group: '36-50 yrs', count: 15, percent: '42%' },
-            { group: '51-65 yrs', count: 11, percent: '30%' },
-            { group: '19-35 yrs', count: 7, percent: '20%' },
-            { group: '66+ yrs', count: 3, percent: '8%' }
-          ],
-          recentMessages: [
-            { id: 'm-4', phone: '+91 98480 99887', patient: 'Vikram Sharma', type: 'Lab Report PDF', status: 'Delivered', time: '12 mins ago' },
-            { id: 'm-5', phone: '+91 99890 44332', patient: 'Pooja Reddy', type: 'Blood Test Results', status: 'Read', time: '40 mins ago' },
-            { id: 'm-6', phone: '+91 94400 12345', patient: 'Mohammed Ali', type: 'Lab Report PDF', status: 'Delivered', time: '2 hrs ago' }
-          ]
-        });
-      }
+      setConnectionNotice('Control Tower offline or unable to connect to on-premise middleware host (127.0.0.1:5069 / cloud.tbzlabs.in). Real-time telemetry will appear when the middleware service is running.');
+      setMetrics({
+        todayRevenue: 0,
+        todayPatients: 0,
+        avgBill: 0,
+        waDeliveredCount: 0,
+        waReadCount: 0,
+        waFailedCount: 0,
+        waSuccessRate: 0,
+        topAreas: [],
+        ageGroups: [],
+        recentMessages: []
+      });
+      setPatientsList([]);
       setLoading(false);
       return;
     }
 
     try {
-      // Parallel fetch overview, labs list, tickets, and context
-      const [ovRes, demoRes, waRes, labsRes, tckRes] = await Promise.all([
+      // Parallel fetch overview, labs list, tickets, context, whatsapp summary, and patients
+      const [ovRes, demoRes, waRes, labsRes, tckRes, patRes] = await Promise.all([
         fetch(`${liveHost}/api/controltower/overview?tenantId=${tenantId}`, {
           headers: { 'X-Tenant-Id': tenantId, 'X-Api-Key': 'TBZ-LAB-KEY-12345' }
         }).catch(() => null),
@@ -335,70 +213,85 @@ export default function CloudPortal({ onBack }) {
         }).catch(() => null),
         fetch(`${liveHost}/api/controltower/tickets`, {
           headers: { 'X-Api-Key': 'TBZ-LAB-KEY-12345' }
+        }).catch(() => null),
+        fetch(`${liveHost}/api/controltower/patients?tenantId=${tenantId}`, {
+          headers: { 'X-Tenant-Id': tenantId, 'X-Api-Key': 'TBZ-LAB-KEY-12345' }
         }).catch(() => null)
       ]);
 
       const ov = ovRes && ovRes.ok ? await ovRes.json() : null;
       const demo = demoRes && demoRes.ok ? await demoRes.json() : null;
       const wa = waRes && waRes.ok ? await waRes.json() : null;
-      const fetchedLabs = labsRes && labsRes.ok ? await labsRes.json() : null;
-      const fetchedTickets = tckRes && tckRes.ok ? await tckRes.json() : null;
+      const fetchedLabs = labsRes && labsRes.ok ? await labsRes.json() : [];
+      const fetchedTickets = tckRes && tckRes.ok ? await tckRes.json() : [];
+      const fetchedPatients = patRes && patRes.ok ? await patRes.json() : [];
 
-      if (Array.isArray(fetchedLabs) && fetchedLabs.length > 0) {
+      if (Array.isArray(fetchedLabs)) {
         setLabsList(fetchedLabs);
       }
 
-      if (Array.isArray(fetchedTickets) && fetchedTickets.length > 0) {
+      if (Array.isArray(fetchedTickets)) {
         setTickets(fetchedTickets);
       }
 
-      const rev = ov?.revenueCollectedToday || (tenantId === 'cura-main-01' ? 14500 : 28400);
-      const pat = ov?.registrationsToday || (tenantId === 'cura-main-01' ? 29 : 36);
+      if (Array.isArray(fetchedPatients)) {
+        setPatientsList(fetchedPatients);
+      }
+
+      const rev = Number(ov?.revenueCollectedToday) || 0;
+      const pat = Number(ov?.registrationsToday) || 0;
       const avg = pat > 0 ? Math.round(rev / pat) : 0;
-      const locations = demo?.demographics?.locations || [];
-      const ages = demo?.demographics?.ageGroups || [];
+      const locations = Array.isArray(demo?.demographics?.locations) ? demo.demographics.locations : [];
+      const ages = Array.isArray(demo?.demographics?.ageGroups) ? demo.demographics.ageGroups : [];
+      
+      const waDelivered = Number(wa?.delivered) || 0;
+      const waRead = Number(wa?.read) || 0;
+      const waFailed = Number(wa?.failed) || 0;
+      const totalWa = waDelivered + waFailed;
+      const waSuccessRate = totalWa > 0 ? Math.round((waDelivered / totalWa) * 100) : 0;
 
       setMetrics({
         todayRevenue: rev,
         todayPatients: pat,
         avgBill: avg,
-        waDeliveredCount: wa?.delivered || (tenantId === 'cura-main-01' ? 42 : 88),
-        waReadCount: wa?.read || (tenantId === 'cura-main-01' ? 38 : 81),
-        waFailedCount: wa?.failed || 0,
-        waSuccessRate: wa ? Math.round(((wa.delivered || 1) / Math.max(1, (wa.delivered || 1) + (wa.failed || 0))) * 100) : 99,
-        topAreas: locations.length > 0 ? locations.slice(0, 4).map(l => ({
-          location: l.location || 'Local Clinic Ward',
+        waDeliveredCount: waDelivered,
+        waReadCount: waRead,
+        waFailedCount: waFailed,
+        waSuccessRate: waSuccessRate,
+        topAreas: locations.map(l => ({
+          location: l.location || 'Local Catchment',
           count: l.patientCount || 0,
-          share: 30
-        })) : [
-          { location: tenantId === 'cura-main-01' ? 'Kukatpally, Hyderabad' : 'Banjara Hills, Hyderabad', count: 18, share: 60 },
-          { location: tenantId === 'cura-main-01' ? 'Miyapur, Hyderabad' : 'Jubilee Hills, Hyderabad', count: 8, share: 26 },
-          { location: 'City Core', count: 4, share: 14 }
-        ],
-        ageGroups: ages.length > 0 ? ages.map(a => ({
+          share: pat > 0 ? Math.round(((l.patientCount || 0) / pat) * 100) : 0
+        })),
+        ageGroups: ages.map(a => ({
           group: a.ageGroup,
-          count: a.patientCount,
-          percent: `${Math.min(100, Math.round((a.patientCount / Math.max(1, pat)) * 100))}%`
-        })) : [
-          { group: '19-35 yrs', count: 14, percent: '48%' },
-          { group: '36-50 yrs', count: 9, percent: '31%' },
-          { group: '51-65 yrs', count: 4, percent: '14%' },
-          { group: '66+ yrs', count: 2, percent: '7%' }
-        ],
-        recentMessages: tenantId === 'cura-main-01' ? [
-          { id: 'm-1', phone: '+91 98490 11223', patient: 'Ramesh Kumar', type: 'Prescription & Token', status: 'Delivered', time: '10 mins ago' },
-          { id: 'm-2', phone: '+91 97012 33445', patient: 'Sunita Devi', type: 'Appointment Reminder', status: 'Read', time: '25 mins ago' },
-          { id: 'm-3', phone: '+91 91234 56789', patient: 'Anand Rao', type: 'Consultation Slip', status: 'Delivered', time: '1 hr ago' }
-        ] : [
-          { id: 'm-4', phone: '+91 98480 99887', patient: 'Vikram Sharma', type: 'Lab Report PDF', status: 'Delivered', time: '12 mins ago' },
-          { id: 'm-5', phone: '+91 99890 44332', patient: 'Pooja Reddy', type: 'Blood Test Results', status: 'Read', time: '40 mins ago' },
-          { id: 'm-6', phone: '+91 94400 12345', patient: 'Mohammed Ali', type: 'Lab Report PDF', status: 'Delivered', time: '2 hrs ago' }
-        ]
+          count: a.patientCount || 0,
+          percent: `${pat > 0 ? Math.min(100, Math.round(((a.patientCount || 0) / pat) * 100)) : 0}%`
+        })),
+        recentMessages: Array.isArray(wa?.recentMessages) ? wa.recentMessages : []
       });
     } catch {
       // Handled cleanly
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPatientDetails = async (patientId) => {
+    if (!connectedHost) return;
+    setPatientDetailsLoading(true);
+    try {
+      const res = await fetch(`${connectedHost}/api/controltower/patients/${patientId}?tenantId=${activeTenantId}`, {
+        headers: { 'X-Tenant-Id': activeTenantId, 'X-Api-Key': 'TBZ-LAB-KEY-12345' }
+      });
+      if (res.ok) {
+        const details = await res.json();
+        setPatientDetails(details);
+      }
+    } catch {
+      // Ignored
+    } finally {
+      setPatientDetailsLoading(false);
     }
   };
 
@@ -616,6 +509,23 @@ export default function CloudPortal({ onBack }) {
     setTimeout(() => setActionNotice(null), 4000);
   };
 
+  // Filtered Patients List for Archive Tab
+  const filteredPatients = patientsList.filter(pat => {
+    if (patientGenderFilter !== 'ALL' && pat.gender?.toLowerCase() !== patientGenderFilter.toLowerCase()) {
+      return false;
+    }
+    if (!patientSearchQuery) return true;
+    const q = patientSearchQuery.toLowerCase();
+    return (
+      (pat.name && pat.name.toLowerCase().includes(q)) ||
+      (pat.mrn && pat.mrn.toLowerCase().includes(q)) ||
+      (pat.mobileNumber && pat.mobileNumber.toLowerCase().includes(q)) ||
+      (pat.location && pat.location.toLowerCase().includes(q)) ||
+      (pat.reasonForVisit && pat.reasonForVisit.toLowerCase().includes(q)) ||
+      (pat.referringDoctorOrPartner && pat.referringDoctorOrPartner.toLowerCase().includes(q))
+    );
+  });
+
   // -------------------------------------------------------------
   // RENDER: SECURITY GATEKEEPER LOCK SCREEN (If Unauthenticated)
   // -------------------------------------------------------------
@@ -777,6 +687,23 @@ export default function CloudPortal({ onBack }) {
           >
             <Activity className="w-3.5 h-3.5" />
             Daily Overview
+          </button>
+
+          <button
+            onClick={() => setActiveTab('patients')}
+            className={`py-3 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+              activeTab === 'patients' 
+                ? 'border-violet-500 text-white font-semibold' 
+                : 'border-transparent hover:text-zinc-200'
+            }`}
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            Patients Archive
+            {patientsList.length > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-violet-500/20 text-violet-300 font-mono border border-violet-500/30">
+                {patientsList.length}
+              </span>
+            )}
           </button>
 
           <button
@@ -996,7 +923,15 @@ export default function CloudPortal({ onBack }) {
                     {metrics.waDeliveredCount} Sent
                   </div>
                   <p className="text-[11px] text-emerald-400 font-medium mt-1 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> {metrics.waSuccessRate}% Delivered via Meta API
+                    {currentTenant.tenantType === 'Clinic' ? (
+                      <span className="text-zinc-500">Pipeline Inactive (Clinic)</span>
+                    ) : metrics.waDeliveredCount > 0 ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3" /> {metrics.waSuccessRate}% Delivered via Meta API
+                      </>
+                    ) : (
+                      <span className="text-zinc-500">0 dispatched today</span>
+                    )}
                   </p>
                 </div>
               </div>
@@ -1019,20 +954,26 @@ export default function CloudPortal({ onBack }) {
                 </div>
 
                 <div className="space-y-3 pt-2">
-                  {metrics.topAreas.map((area, idx) => (
-                    <div key={idx} className="space-y-1.5">
-                      <div className="flex justify-between text-xs">
-                        <span className="font-medium text-zinc-200">📍 {area.location}</span>
-                        <span className="font-semibold text-white">{area.count} patients</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-violet-600 to-indigo-500 rounded-full"
-                          style={{ width: `${Math.min(100, (area.count / Math.max(1, metrics.todayPatients)) * 100)}%` }}
-                        />
-                      </div>
+                  {metrics.topAreas.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-zinc-500">
+                      No patient locality records registered today for {currentTenant.name}.
                     </div>
-                  ))}
+                  ) : (
+                    metrics.topAreas.map((area, idx) => (
+                      <div key={idx} className="space-y-1.5">
+                        <div className="flex justify-between text-xs">
+                          <span className="font-medium text-zinc-200">📍 {area.location}</span>
+                          <span className="font-semibold text-white">{area.count} patients</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-violet-600 to-indigo-500 rounded-full"
+                            style={{ width: `${Math.min(100, (area.count / Math.max(1, metrics.todayPatients)) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -1044,36 +985,338 @@ export default function CloudPortal({ onBack }) {
                       <h3 className="text-sm font-bold text-white tracking-tight">Recent WhatsApp Messages</h3>
                       <p className="text-xs text-zinc-400">Official Meta Cloud API status</p>
                     </div>
-                    <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
-                      🟢 Connected
-                    </span>
+                    {currentTenant.tenantType === 'Clinic' ? (
+                      <span className="text-[11px] font-semibold text-zinc-400 bg-zinc-800 border border-zinc-700 px-2.5 py-1 rounded-lg">
+                        Not Configured
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+                        🟢 Connected
+                      </span>
+                    )}
                   </div>
 
                   <div className="divide-y divide-zinc-800/60 mt-4 text-xs">
-                    {metrics.recentMessages.map((msg) => (
-                      <div key={msg.id} className="py-2.5 flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-white">{msg.patient} <span className="text-zinc-400 text-[11px]">({msg.phone})</span></p>
-                          <p className="text-[11px] text-zinc-400">{msg.type}</p>
-                        </div>
-                        <div className="text-right">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            {msg.status}
-                          </span>
-                          <p className="text-[10px] text-zinc-500 mt-0.5">{msg.time}</p>
-                        </div>
+                    {currentTenant.tenantType === 'Clinic' ? (
+                      <div className="py-6 text-center text-xs text-zinc-500">
+                        WhatsApp messaging pipeline is inactive for CuraOS Clinic. 0 messages dispatched.
                       </div>
-                    ))}
+                    ) : metrics.recentMessages.length === 0 ? (
+                      <div className="py-6 text-center text-xs text-zinc-500">
+                        No WhatsApp messages dispatched yet today for {currentTenant.name}.
+                      </div>
+                    ) : (
+                      metrics.recentMessages.map((msg) => (
+                        <div key={msg.id} className="py-2.5 flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-white">{msg.patient} <span className="text-zinc-400 text-[11px]">({msg.phone})</span></p>
+                            <p className="text-[11px] text-zinc-400">{msg.type}</p>
+                          </div>
+                          <div className="text-right">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              {msg.status}
+                            </span>
+                            <p className="text-[10px] text-zinc-500 mt-0.5">{msg.time}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
 
                 <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-between text-xs text-zinc-400">
-                  <span>Meta Account: <strong className="text-zinc-200">TBZ Labs Graph v25.0</strong></span>
-                  <span className="text-emerald-400 font-medium">Template: report_ready_v2</span>
+                  <span>Meta Account: <strong className="text-zinc-200">{currentTenant.tenantType === 'Clinic' ? 'Not Applicable' : 'TBZ Labs Graph v25.0'}</strong></span>
+                  <span className={currentTenant.tenantType === 'Clinic' ? 'text-zinc-500' : 'text-emerald-400 font-medium'}>
+                    {currentTenant.tenantType === 'Clinic' ? 'Inactive' : 'Template: report_ready_v2'}
+                  </span>
                 </div>
               </div>
 
             </div>
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------- */}
+        {/* TAB: PATIENTS ARCHIVE & DIRECTORY                            */}
+        {/* ------------------------------------------------------------- */}
+        {activeTab === 'patients' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header & Privacy Badge */}
+            <div className="p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-bold text-white tracking-tight">Patients Operational Directory & Archive</h2>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20 font-mono">
+                      {filteredPatients.length} Records
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Centralized demographic and operational visit registry for <strong className="text-zinc-200">{currentTenant.name}</strong> ({currentTenant.id}).
+                  </p>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-medium flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    DISHA & HIPAA Architecture
+                  </span>
+                </div>
+              </div>
+
+              {/* Privacy Shield Alert */}
+              <div className="p-3.5 rounded-xl bg-violet-950/30 border border-violet-800/40 text-xs text-violet-200 flex items-start gap-3">
+                <Lock className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-semibold text-violet-100">Strict Non-Clinical Privacy Guarantee</p>
+                  <p className="text-zinc-300 leading-relaxed">
+                    Clinical investigation results (biochemistry/pathology test numerical values & reference ranges) and doctor consultation diagnoses/clinical verdicts remain strictly on-premise on your local machine. The Cloud Control Tower only synchronizes non-clinical demographics, visit timestamps, contact numbers, and operational departments for administrative coordination.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Filter and Search Bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search by name, MRN, phone, area, doctor..."
+                  value={patientSearchQuery}
+                  onChange={(e) => setPatientSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 bg-zinc-900/80 border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+                />
+                {patientSearchQuery && (
+                  <button
+                    onClick={() => setPatientSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <span className="text-xs text-zinc-500 hidden sm:inline">Gender:</span>
+                {['ALL', 'Male', 'Female'].map((gender) => (
+                  <button
+                    key={gender}
+                    onClick={() => setPatientGenderFilter(gender)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                      patientGenderFilter === gender
+                        ? 'bg-violet-600 text-white shadow-sm'
+                        : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    {gender === 'ALL' ? 'All Genders' : gender}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Patients Table */}
+            <div className="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-zinc-300">
+                  <thead className="bg-zinc-950/60 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-zinc-800">
+                    <tr>
+                      <th className="px-5 py-3.5 font-semibold">Patient / MRN</th>
+                      <th className="px-4 py-3.5 font-semibold">Sex & Age</th>
+                      <th className="px-4 py-3.5 font-semibold">Contact</th>
+                      <th className="px-4 py-3.5 font-semibold">Catchment / Area</th>
+                      <th className="px-4 py-3.5 font-semibold">Reason for Visit / Dept</th>
+                      <th className="px-4 py-3.5 font-semibold">Visits</th>
+                      <th className="px-4 py-3.5 font-semibold">Last Visit</th>
+                      <th className="px-5 py-3.5 font-semibold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-800/60 font-medium">
+                    {filteredPatients.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="px-5 py-12 text-center text-zinc-500">
+                          <Users className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm font-semibold text-zinc-400">No Patient Records Found</p>
+                          <p className="text-xs text-zinc-600 mt-1 max-w-sm mx-auto">
+                            {patientSearchQuery 
+                              ? `No patients match the filter "${patientSearchQuery}".`
+                              : `When visits or registrations occur in SynOS or CuraOS on your local machine, they will be archived here in real-time.`}
+                          </p>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredPatients.map((pat) => (
+                        <tr key={pat.patientId} className="hover:bg-zinc-850/40 transition-colors">
+                          <td className="px-5 py-4">
+                            <div className="font-semibold text-white flex items-center gap-2">
+                              <span>{pat.name}</span>
+                            </div>
+                            <span className="font-mono text-[10px] text-zinc-400 bg-zinc-950 px-1.5 py-0.5 rounded border border-zinc-800 mt-1 inline-block">
+                              {pat.mrn || 'N/A'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                              pat.gender?.toLowerCase() === 'female'
+                                ? 'bg-pink-500/10 text-pink-400 border-pink-500/20'
+                                : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                            }`}>
+                              {pat.gender || 'Unknown'}
+                            </span>
+                            <p className="text-[11px] text-zinc-400 mt-1">{pat.age > 0 ? `${pat.age} yrs` : 'Age N/A'}</p>
+                          </td>
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-1 text-zinc-300 font-mono text-[11px]">
+                              <Phone className="w-3 h-3 text-zinc-500" />
+                              <span>{pat.mobileNumber || 'No Phone'}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-1.5 text-zinc-300">
+                              <MapPin className="w-3 h-3 text-violet-400 shrink-0" />
+                              <span className="truncate max-w-[150px]">{pat.location || 'Local Catchment'}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4">
+                            <div className="max-w-[200px] truncate font-medium text-zinc-200" title={pat.reasonForVisit || pat.testsOrdered}>
+                              {pat.reasonForVisit || pat.testsOrdered || 'General Consultation'}
+                            </div>
+                            {pat.referringDoctorOrPartner && (
+                              <p className="text-[10px] text-zinc-500 truncate mt-0.5">
+                                Ref: {pat.referringDoctorOrPartner}
+                              </p>
+                            )}
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className="font-mono font-bold text-white bg-zinc-800 px-2 py-0.5 rounded-md text-xs">
+                              {pat.totalVisits || 1}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-[11px] text-zinc-400">
+                            {pat.lastVisitDate ? new Date(pat.lastVisitDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Today'}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <button
+                              onClick={() => {
+                                setSelectedPatient(pat);
+                                fetchPatientDetails(pat.patientId);
+                              }}
+                              className="px-3 py-1.5 bg-zinc-800 hover:bg-violet-600 text-zinc-300 hover:text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                            >
+                              Timeline
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Patient Detail Modal */}
+            {selectedPatient && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+                  {/* Modal Header */}
+                  <div className="p-6 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/60">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-lg font-bold text-white">{selectedPatient.name}</h3>
+                        <span className="font-mono text-xs px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded border border-zinc-700">
+                          {selectedPatient.mrn}
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-400 mt-1">
+                        {selectedPatient.gender} • {selectedPatient.age} yrs • {selectedPatient.mobileNumber || 'No Phone'} • {selectedPatient.location || 'Local Area'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setSelectedPatient(null);
+                        setPatientDetails(null);
+                      }}
+                      className="text-zinc-400 hover:text-white p-2 rounded-lg hover:bg-zinc-800"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Modal Body */}
+                  <div className="p-6 overflow-y-auto space-y-6">
+                    {/* Privacy Note */}
+                    <div className="p-3 bg-violet-950/20 border border-violet-800/30 rounded-xl text-xs text-violet-300 flex items-center gap-2">
+                      <Lock className="w-4 h-4 text-violet-400 shrink-0" />
+                      <span>Diagnostic test numerical reports and doctor clinical prescription verdicts remain exclusively on-premise.</span>
+                    </div>
+
+                    {/* Stats Summary */}
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div className="p-3 bg-zinc-950/60 rounded-xl border border-zinc-800">
+                        <p className="text-[11px] text-zinc-400">Total Visits</p>
+                        <p className="text-lg font-bold text-white mt-0.5">{selectedPatient.totalVisits || 1}</p>
+                      </div>
+                      <div className="p-3 bg-zinc-950/60 rounded-xl border border-zinc-800">
+                        <p className="text-[11px] text-zinc-400">Lifetime Revenue</p>
+                        <p className="text-lg font-bold text-emerald-400 mt-0.5">{formatINR(selectedPatient.lifetimeRevenue)}</p>
+                      </div>
+                      <div className="p-3 bg-zinc-950/60 rounded-xl border border-zinc-800">
+                        <p className="text-[11px] text-zinc-400">Doctor / Partner</p>
+                        <p className="text-xs font-semibold text-zinc-200 mt-1 truncate">{selectedPatient.referringDoctorOrPartner || 'Walk-In'}</p>
+                      </div>
+                    </div>
+
+                    {/* Visits Timeline */}
+                    <div className="space-y-3">
+                      <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Visit History Ledger</h4>
+                      {patientDetailsLoading ? (
+                        <div className="py-8 text-center text-xs text-zinc-500">
+                          <RefreshCw className="w-4 h-4 animate-spin mx-auto mb-2 text-violet-400" />
+                          Loading visit ledger...
+                        </div>
+                      ) : patientDetails?.visits?.length > 0 ? (
+                        <div className="space-y-2">
+                          {patientDetails.visits.map((v, i) => (
+                            <div key={v.visitId || i} className="p-3.5 bg-zinc-950/60 border border-zinc-800/80 rounded-xl flex items-center justify-between text-xs">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-mono text-zinc-400 font-semibold">Token: {v.token || 'N/A'}</span>
+                                  <span className="text-zinc-500">•</span>
+                                  <span className="text-zinc-300 font-medium">{new Date(v.visitDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                </div>
+                                <p className="text-zinc-400 text-[11px]">Reason: <span className="text-zinc-200">{v.reasonForVisit || (v.tests?.length > 0 ? v.tests.join(', ') : 'Routine Consultation')}</span></p>
+                              </div>
+                              <div className="text-right">
+                                <span className="font-bold text-white">{formatINR(v.amountPaid)}</span>
+                                <p className="text-[10px] text-emerald-400">Billed & Cleared</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-4 bg-zinc-950/40 rounded-xl border border-zinc-800/60 text-center text-xs text-zinc-500">
+                          Initial registration visit recorded on {selectedPatient.lastVisitDate ? new Date(selectedPatient.lastVisitDate).toLocaleDateString('en-IN') : 'Today'}.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Modal Footer */}
+                  <div className="p-4 border-t border-zinc-800 bg-zinc-950/60 flex justify-end">
+                    <button
+                      onClick={() => {
+                        setSelectedPatient(null);
+                        setPatientDetails(null);
+                      }}
+                      className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-xs font-medium transition-colors"
+                    >
+                      Close Directory Record
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
 
@@ -1116,8 +1359,19 @@ export default function CloudPortal({ onBack }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
-                    {labsList.map((lab) => (
-                      <tr key={lab.id} className="hover:bg-zinc-850/40 transition-colors">
+                    {labsList.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="p-10 text-center text-zinc-500 text-xs">
+                          <Server className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm font-semibold text-zinc-400">No On-Premise Nodes Connected</p>
+                          <p className="text-xs text-zinc-600 mt-1 max-w-sm mx-auto">
+                            Ensure the middleware service or Cloudflare tunnel is running on your host machine to sync node licenses.
+                          </p>
+                        </td>
+                      </tr>
+                    ) : (
+                      labsList.map((lab) => (
+                        <tr key={lab.id} className="hover:bg-zinc-850/40 transition-colors">
                         
                         {/* Name & ID */}
                         <td className="p-4">
@@ -1218,8 +1472,9 @@ export default function CloudPortal({ onBack }) {
                           </div>
                         </td>
 
-                      </tr>
-                    ))}
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -1284,8 +1539,19 @@ export default function CloudPortal({ onBack }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
-                    {tickets.map((t) => (
-                      <tr key={t.id} className="hover:bg-zinc-850/40 transition-colors">
+                    {tickets.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="p-10 text-center text-zinc-500 text-xs">
+                          <Bug className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm font-semibold text-zinc-400">No Support Tickets Logged</p>
+                          <p className="text-xs text-zinc-600 mt-1 max-w-sm mx-auto">
+                            Unhandled exceptions and user-reported bugs from local terminals will automatically stream into this triage queue.
+                          </p>
+                        </td>
+                      </tr>
+                    ) : (
+                      tickets.map((t) => (
+                        <tr key={t.id} className="hover:bg-zinc-850/40 transition-colors">
                         
                         {/* Title & Description */}
                         <td className="p-4 max-w-sm">
@@ -1366,8 +1632,9 @@ export default function CloudPortal({ onBack }) {
                           </button>
                         </td>
 
-                      </tr>
-                    ))}
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -1391,9 +1658,15 @@ export default function CloudPortal({ onBack }) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Meta Graph v25.0 Active
-                  </span>
+                  {currentTenant.tenantType === 'Clinic' ? (
+                    <span className="text-xs px-3 py-1 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 font-medium">
+                      Pipeline Not Configured (Clinic)
+                    </span>
+                  ) : (
+                    <span className="text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Meta Graph v25.0 Active
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -1421,23 +1694,33 @@ export default function CloudPortal({ onBack }) {
               <div className="space-y-3 pt-2">
                 <h4 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Live Delivery Log</h4>
                 <div className="border border-zinc-800 rounded-xl overflow-hidden divide-y divide-zinc-800/80 text-xs">
-                  {metrics.recentMessages.map((msg) => (
-                    <div key={msg.id} className="p-3.5 bg-zinc-950/30 flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-white">{msg.patient}</span>
-                          <span className="font-mono text-[11px] text-zinc-400">{msg.phone}</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-400">Type: {msg.type} • Sent via Meta Webhook</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="px-2.5 py-0.5 rounded-full font-medium text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          {msg.status}
-                        </span>
-                        <p className="text-[10px] text-zinc-500 mt-0.5">{msg.time}</p>
-                      </div>
+                  {currentTenant.tenantType === 'Clinic' ? (
+                    <div className="p-8 text-center text-zinc-500 text-xs">
+                      WhatsApp delivery pipeline is currently not configured for CuraOS Clinic. 0 messages dispatched.
                     </div>
-                  ))}
+                  ) : metrics.recentMessages.length === 0 ? (
+                    <div className="p-8 text-center text-zinc-500 text-xs">
+                      No WhatsApp delivery events recorded yet for {currentTenant.name}. Messages will appear here in real-time as reports are delivered.
+                    </div>
+                  ) : (
+                    metrics.recentMessages.map((msg) => (
+                      <div key={msg.id} className="p-3.5 bg-zinc-950/30 flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-white">{msg.patient}</span>
+                            <span className="font-mono text-[11px] text-zinc-400">{msg.phone}</span>
+                          </div>
+                          <p className="text-[11px] text-zinc-400">Type: {msg.type} • Sent via Meta Webhook</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="px-2.5 py-0.5 rounded-full font-medium text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            {msg.status}
+                          </span>
+                          <p className="text-[10px] text-zinc-500 mt-0.5">{msg.time}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -1458,20 +1741,26 @@ export default function CloudPortal({ onBack }) {
                 <p className="text-xs text-zinc-400">Captured from actual patient registrations</p>
 
                 <div className="space-y-4 pt-2">
-                  {metrics.ageGroups.map((grp, idx) => (
-                    <div key={idx} className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span className="font-medium text-zinc-300">{grp.group}</span>
-                        <span className="font-semibold text-white">{grp.count} ({grp.percent})</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
-                        <div 
-                          className="h-full bg-violet-500 rounded-full"
-                          style={{ width: grp.percent }}
-                        />
-                      </div>
+                  {metrics.ageGroups.length === 0 ? (
+                    <div className="py-8 text-center text-xs text-zinc-500">
+                      No age distribution records synchronized yet for this tenant.
                     </div>
-                  ))}
+                  ) : (
+                    metrics.ageGroups.map((grp, idx) => (
+                      <div key={idx} className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="font-medium text-zinc-300">{grp.group}</span>
+                          <span className="font-semibold text-white">{grp.count} ({grp.percent})</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
+                          <div 
+                            className="h-full bg-violet-500 rounded-full"
+                            style={{ width: grp.percent }}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -1490,17 +1779,25 @@ export default function CloudPortal({ onBack }) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
-                      {metrics.topAreas.map((area, idx) => (
-                        <tr key={idx}>
-                          <td className="py-2.5 font-medium text-white flex items-center gap-1.5">
-                            📍 {area.location}
-                          </td>
-                          <td className="py-2.5 text-right font-medium">{area.count}</td>
-                          <td className="py-2.5 text-right font-bold text-emerald-400">
-                            {formatINR(area.count * (metrics.avgBill || 500))}
+                      {metrics.topAreas.length === 0 ? (
+                        <tr>
+                          <td colSpan={3} className="py-8 text-center text-xs text-zinc-500">
+                            No patient catchment areas registered yet for this tenant.
                           </td>
                         </tr>
-                      ))}
+                      ) : (
+                        metrics.topAreas.map((area, idx) => (
+                          <tr key={idx}>
+                            <td className="py-2.5 font-medium text-white flex items-center gap-1.5">
+                              📍 {area.location}
+                            </td>
+                            <td className="py-2.5 text-right font-medium">{area.count}</td>
+                            <td className="py-2.5 text-right font-bold text-emerald-400">
+                              {formatINR(area.count * (metrics.avgBill || 0))}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
