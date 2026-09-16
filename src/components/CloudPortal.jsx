@@ -178,6 +178,13 @@ export default function CloudPortal({ onBack }) {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [ticketStatusUpdate, setTicketStatusUpdate] = useState({ status: 'In Progress', note: '' });
+  const [editingLicense, setEditingLicense] = useState(null);
+  const [editLicenseForm, setEditLicenseForm] = useState({
+    licenseType: 'Commercial',
+    maximumBranches: 1,
+    status: 'Active',
+    expiryDate: ''
+  });
 
   // Register Form State
   const [newTenantForm, setNewTenantForm] = useState({
@@ -477,6 +484,50 @@ export default function CloudPortal({ onBack }) {
       setCopiedKey({ tenantId, key: dummyKey });
       setActionNotice(`🔑 New Key generated for ${tenantId}. Copy and save it safely.`);
     }
+  };
+
+  const handleOpenEditLicense = (lab) => {
+    setEditingLicense(lab);
+    setEditLicenseForm({
+      licenseType: lab.licenseType || 'Commercial',
+      maximumBranches: lab.maximumBranches ?? 1,
+      status: lab.licenseStatus || 'Active',
+      expiryDate: lab.expiryDate ? new Date(lab.expiryDate).toISOString().substring(0, 10) : ''
+    });
+  };
+
+  const handleSaveLicenseChanges = async (e) => {
+    e.preventDefault();
+    if (!editingLicense) return;
+
+    setActionNotice(`Updating license parameters & branch quotas for ${editingLicense.id}...`);
+    try {
+      const host = connectedHost || LOCAL_API_BASE;
+      await fetch(`${host}/api/controltower/labs/${editingLicense.id}/license`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Api-Key': 'TBZ-LAB-KEY-12345' },
+        body: JSON.stringify({
+          licenseType: editLicenseForm.licenseType,
+          maximumBranches: Number(editLicenseForm.maximumBranches) || 1,
+          status: editLicenseForm.status,
+          expiryDate: editLicenseForm.expiryDate ? new Date(editLicenseForm.expiryDate).toISOString() : null
+        })
+      });
+    } catch {
+      // Local fallback
+    }
+
+    setLabsList(prev => prev.map(l => l.id === editingLicense.id ? {
+      ...l,
+      licenseType: editLicenseForm.licenseType,
+      maximumBranches: Number(editLicenseForm.maximumBranches) || 1,
+      licenseStatus: editLicenseForm.status,
+      expiryDate: editLicenseForm.expiryDate ? new Date(editLicenseForm.expiryDate).toISOString() : l.expiryDate
+    } : l));
+
+    setEditingLicense(null);
+    setActionNotice(`✅ License & branch limits updated for ${editingLicense.id} (${editLicenseForm.maximumBranches} branch limit).`);
+    setTimeout(() => setActionNotice(null), 4000);
   };
 
   const handleRegisterTenant = async (e) => {
@@ -1128,6 +1179,15 @@ export default function CloudPortal({ onBack }) {
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             
+                            {/* Edit License & Branches */}
+                            <button
+                              onClick={() => handleOpenEditLicense(lab)}
+                              className="px-2.5 py-1 bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/30 rounded-lg text-[11px] font-medium transition-colors cursor-pointer"
+                              title="Configure Branch Quota & License Tier"
+                            >
+                              Edit Plan / Branches
+                            </button>
+
                             {/* Renew 1 Year */}
                             <button
                               onClick={() => handleRenewSubscription(lab.id)}
@@ -1638,6 +1698,102 @@ export default function CloudPortal({ onBack }) {
               </div>
 
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* MODAL: EDIT LICENSE & BRANCHES                                */}
+      {/* ------------------------------------------------------------- */}
+      {editingLicense && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl">
+            
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+              <div>
+                <h3 className="text-base font-bold text-white">Edit Plan & Branch Quota</h3>
+                <p className="text-xs text-zinc-400 font-mono">{editingLicense.labName} ({editingLicense.id})</p>
+              </div>
+              <button 
+                onClick={() => setEditingLicense(null)}
+                className="text-zinc-400 hover:text-white text-lg font-bold"
+              >
+                &times;
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveLicenseChanges} className="space-y-4 text-xs">
+              
+              <div className="space-y-1">
+                <label className="text-zinc-300 font-semibold">Maximum Allowed Branches</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  required
+                  value={editLicenseForm.maximumBranches}
+                  onChange={(e) => setEditLicenseForm({ ...editLicenseForm, maximumBranches: Math.max(1, parseInt(e.target.value) || 1) })}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-sm"
+                />
+                <p className="text-[11px] text-zinc-400">
+                  Total satellite branches and collection centers this key can register.
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-zinc-300 font-semibold">License Tier</label>
+                <select
+                  value={editLicenseForm.licenseType}
+                  onChange={(e) => setEditLicenseForm({ ...editLicenseForm, licenseType: e.target.value })}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"
+                >
+                  <option value="Commercial">Commercial Standard</option>
+                  <option value="Enterprise">Commercial Enterprise</option>
+                  <option value="Professional">Professional Suite</option>
+                  <option value="Trial">Evaluation Trial</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-zinc-300 font-semibold">Operational Status</label>
+                <select
+                  value={editLicenseForm.status}
+                  onChange={(e) => setEditLicenseForm({ ...editLicenseForm, status: e.target.value })}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"
+                >
+                  <option value="Active">Active (Full Operational Access)</option>
+                  <option value="Suspended">Suspended (Read-Only Mode)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-zinc-300 font-semibold">Custom Expiry Date</label>
+                <input
+                  type="date"
+                  value={editLicenseForm.expiryDate}
+                  onChange={(e) => setEditLicenseForm({ ...editLicenseForm, expiryDate: e.target.value })}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingLicense(null)}
+                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-750 text-zinc-300 rounded-xl font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-semibold shadow-md"
+                >
+                  Save & Apply Directive
+                </button>
+              </div>
+
+            </form>
 
           </div>
         </div>
