@@ -9,6 +9,7 @@ import HowIWork from './components/HowIWork';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import SynosPage from './components/SynosPage';
+import CloudPortal from './components/CloudPortal';
 import ContactOptionsModal from './components/ContactOptionsModal';
 import FAQ from './components/FAQ';
 import { Analytics } from '@vercel/analytics/react';
@@ -27,10 +28,13 @@ function App() {
 
   useEffect(() => {
     const handleLocationChange = () => {
-      const path = window.location.pathname;
-      const hash = window.location.hash;
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
       if (path === '/synos' || path === '/synos/' || hash === '#/synos' || hash === '#synos') {
         setCurrentView('synos');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      } else if (path === '/cloud' || path === '/cloud/' || path === '/controltower' || path === '/controltower/' || hash === '#/cloud' || hash === '#cloud') {
+        setCurrentView('cloud');
         window.scrollTo({ top: 0, behavior: 'instant' });
       } else {
         setCurrentView('home');
@@ -61,7 +65,8 @@ function App() {
       canonicalLink.rel = 'canonical';
       document.head.appendChild(canonicalLink);
     }
-    const cleanUrl = window.location.origin + (currentView === 'synos' ? '/synos' : '/');
+    const cleanPath = currentView === 'synos' ? '/synos' : (currentView === 'cloud' ? '/cloud' : '/');
+    const cleanUrl = window.location.origin + cleanPath;
     canonicalLink.setAttribute('href', cleanUrl);
   }, [currentView]);
 
@@ -69,6 +74,10 @@ function App() {
     if (target === '/synos' || target === 'synos') {
       window.history.pushState({}, '', '/synos');
       setCurrentView('synos');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } else if (target === '/cloud' || target === 'cloud' || target === 'controltower') {
+      window.history.pushState({}, '', '/cloud');
+      setCurrentView('cloud');
       window.scrollTo({ top: 0, behavior: 'instant' });
     } else if (target === '/' || target === 'home' || target === '') {
       window.history.pushState({}, '', '/');
@@ -129,7 +138,7 @@ function App() {
             </main>
             <Footer onNavigate={handleNavigate} />
           </motion.div>
-        ) : (
+        ) : currentView === 'synos' ? (
           <motion.div
             key="synos-view"
             initial={{ opacity: 0 }}
@@ -139,6 +148,17 @@ function App() {
             className="flex-1 flex flex-col justify-between"
           >
             <SynosPage onBack={() => navigateToHome('systems')} onContactClick={() => handleOpenContact('synos')} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="cloud-view"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: 'easeInOut' }}
+            className="flex-1 flex flex-col justify-between"
+          >
+            <CloudPortal onBack={() => navigateToHome('home')} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -156,4 +176,3 @@ function App() {
 }
 
 export default App;
-

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, MessageSquare } from 'lucide-react';
+import { Menu, X, MessageSquare, Cloud } from 'lucide-react';
 import logoSvg from '../assets/logo.svg';
 
 export default function Navbar({ onContactClick, currentView, onNavigate }) {
@@ -17,6 +17,7 @@ export default function Navbar({ onContactClick, currentView, onNavigate }) {
 
   const navLinks = [
     { name: 'SynOS', href: '/synos', target: 'synos' },
+    { name: 'TBZ Cloud', href: '/cloud', target: 'cloud', badge: 'New' },
     { name: 'See Our Work', href: '/#systems', target: 'systems' },
     { name: 'What We Build', href: '/#capabilities', target: 'capabilities' },
     { name: 'How I Work', href: '/#how-i-work', target: 'how-i-work' },
@@ -57,21 +58,33 @@ export default function Navbar({ onContactClick, currentView, onNavigate }) {
         </a>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-7">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
               onClick={(e) => handleLinkClick(e, link)}
-              className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
+              className="text-sm text-zinc-400 hover:text-white transition-colors duration-200 flex items-center gap-1.5"
             >
               {link.name}
+              {link.badge && (
+                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                  {link.badge}
+                </span>
+              )}
             </a>
           ))}
         </div>
 
         {/* Desktop CTA */}
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-3">
+          <button
+            onClick={() => onNavigate?.('cloud')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-xs font-medium text-zinc-300 hover:text-white hover:border-zinc-700 transition-all duration-200 cursor-pointer"
+          >
+            <Cloud className="w-3.5 h-3.5 text-violet-400" />
+            Control Tower
+          </button>
           <button
             onClick={onContactClick}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-sm font-medium text-white hover:bg-zinc-850 hover:border-zinc-700 transition-all duration-200 cursor-pointer"
@@ -110,20 +123,37 @@ export default function Navbar({ onContactClick, currentView, onNavigate }) {
                     setIsOpen(false);
                     handleLinkClick(e, link);
                   }}
-                  className="text-lg text-zinc-400 hover:text-white transition-colors duration-200"
+                  className="text-lg text-zinc-400 hover:text-white transition-colors duration-200 flex items-center justify-between"
                 >
-                  {link.name}
+                  <span>{link.name}</span>
+                  {link.badge && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                      {link.badge}
+                    </span>
+                  )}
                 </a>
               ))}
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  onContactClick();
-                }}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors cursor-pointer border-none"
-              >
-                Let's Talk
-              </button>
+              <div className="flex flex-col gap-3 pt-4 border-t border-zinc-800/80">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    onNavigate?.('cloud');
+                  }}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white font-medium hover:bg-zinc-850 transition-colors cursor-pointer"
+                >
+                  <Cloud className="w-4 h-4 text-violet-400" />
+                  Control Tower
+                </button>
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    onContactClick();
+                  }}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors cursor-pointer border-none"
+                >
+                  Let's Talk
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
