@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Building2, 
   Users, 
@@ -32,7 +32,10 @@ import {
   Phone,
   MapPin,
   UserCheck,
-  X
+  X,
+  Stethoscope,
+  Wallet,
+  FileText
 } from 'lucide-react';
 
 const CLOUD_API_BASE = 'https://cloud.tbzlabs.in';
@@ -90,6 +93,11 @@ export default function CloudPortal({ onBack }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [patientDetailsLoading, setPatientDetailsLoading] = useState(false);
   const [patientDetails, setPatientDetails] = useState(null);
+  const [selectedDoctorFilter, setSelectedDoctorFilter] = useState('ALL');
+
+  // Referral Partners & Doctor Analytics State
+  const [referralsData, setReferralsData] = useState({ doctors: [], partners: [] });
+  const [referralSearchQuery, setReferralSearchQuery] = useState('');
 
   // Modals & Action Feedback
   const [copiedKey, setCopiedKey] = useState(null);
@@ -192,13 +200,14 @@ export default function CloudPortal({ onBack }) {
         recentMessages: []
       });
       setPatientsList([]);
+      setReferralsData({ doctors: [], partners: [] });
       setLoading(false);
       return;
     }
 
     try {
-      // Parallel fetch overview, labs list, tickets, context, whatsapp summary, and patients
-      const [ovRes, demoRes, waRes, labsRes, tckRes, patRes] = await Promise.all([
+      // Parallel fetch overview, labs list, tickets, context, whatsapp summary, patients, and referrals
+      const [ovRes, demoRes, waRes, labsRes, tckRes, patRes, refRes] = await Promise.all([
         fetch(`${liveHost}/api/controltower/overview?tenantId=${tenantId}`, {
           headers: { 'X-Tenant-Id': tenantId, 'X-Api-Key': 'TBZ-LAB-KEY-12345' }
         }).catch(() => null),
@@ -216,6 +225,9 @@ export default function CloudPortal({ onBack }) {
         }).catch(() => null),
         fetch(`${liveHost}/api/controltower/patients?tenantId=${tenantId}`, {
           headers: { 'X-Tenant-Id': tenantId, 'X-Api-Key': 'TBZ-LAB-KEY-12345' }
+        }).catch(() => null),
+        fetch(`${liveHost}/api/controltower/referrals?tenantId=${tenantId}`, {
+          headers: { 'X-Tenant-Id': tenantId, 'X-Api-Key': 'TBZ-LAB-KEY-12345' }
         }).catch(() => null)
       ]);
 
@@ -225,6 +237,7 @@ export default function CloudPortal({ onBack }) {
       const fetchedLabs = labsRes && labsRes.ok ? await labsRes.json() : [];
       const fetchedTickets = tckRes && tckRes.ok ? await tckRes.json() : [];
       const fetchedPatients = patRes && patRes.ok ? await patRes.json() : [];
+      const fetchedRefs = refRes && refRes.ok ? await refRes.json() : null;
 
       if (Array.isArray(fetchedLabs)) {
         setLabsList(fetchedLabs);
@@ -236,6 +249,13 @@ export default function CloudPortal({ onBack }) {
 
       if (Array.isArray(fetchedPatients)) {
         setPatientsList(fetchedPatients);
+      }
+
+      if (fetchedRefs) {
+        setReferralsData({
+          doctors: Array.isArray(fetchedRefs.doctors) ? fetchedRefs.doctors : [],
+          partners: Array.isArray(fetchedRefs.partners) ? fetchedRefs.partners : []
+        });
       }
 
       const rev = Number(ov?.revenueCollectedToday) || 0;
@@ -509,10 +529,31 @@ export default function CloudPortal({ onBack }) {
     setTimeout(() => setActionNotice(null), 4000);
   };
 
+  // Extract unique referring doctors dynamically
+  const uniqueDoctors = useMemo(() => {
+    const set = new Set();
+    referralsData.doctors.forEach(d => {
+      if (d.doctorName && d.doctorName.trim() && d.doctorName !== 'Self-Referral') set.add(d.doctorName.trim());
+    });
+    patientsList.forEach(p => {
+      if (p.referringDoctorOrPartner && p.referringDoctorOrPartner.trim() && p.referringDoctorOrPartner !== 'Direct Walk-In' && p.referringDoctorOrPartner !== 'Self-Referral') {
+        set.add(p.referringDoctorOrPartner.trim());
+      }
+    });
+    return Array.from(set).sort();
+  }, [referralsData.doctors, patientsList]);
+
   // Filtered Patients List for Archive Tab
   const filteredPatients = patientsList.filter(pat => {
     if (patientGenderFilter !== 'ALL' && pat.gender?.toLowerCase() !== patientGenderFilter.toLowerCase()) {
       return false;
+    }
+    if (selectedDoctorFilter !== 'ALL') {
+      const doc = selectedDoctorFilter.toLowerCase();
+      const patDoc = (pat.referringDoctorOrPartner || '').toLowerCase();
+      if (patDoc !== doc && !patDoc.includes(doc)) {
+        return false;
+      }
     }
     if (!patientSearchQuery) return true;
     const q = patientSearchQuery.toLowerCase();
@@ -523,6 +564,17 @@ export default function CloudPortal({ onBack }) {
       (pat.location && pat.location.toLowerCase().includes(q)) ||
       (pat.reasonForVisit && pat.reasonForVisit.toLowerCase().includes(q)) ||
       (pat.referringDoctorOrPartner && pat.referringDoctorOrPartner.toLowerCase().includes(q))
+    );
+  });
+
+  // Filtered Doctors / Partners for Referrals Tab
+  const filteredDoctors = referralsData.doctors.filter(d => {
+    if (!referralSearchQuery) return true;
+    const q = referralSearchQuery.toLowerCase();
+    return (
+      (d.doctorName && d.doctorName.toLowerCase().includes(q)) ||
+      (d.doctorId && d.doctorId.toLowerCase().includes(q)) ||
+      (d.location && d.location.toLowerCase().includes(q))
     );
   });
 
@@ -702,6 +754,23 @@ export default function CloudPortal({ onBack }) {
             {patientsList.length > 0 && (
               <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-violet-500/20 text-violet-300 font-mono border border-violet-500/30">
                 {patientsList.length}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('referrals')}
+            className={`py-3 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+              activeTab === 'referrals' 
+                ? 'border-violet-500 text-white font-semibold' 
+                : 'border-transparent hover:text-zinc-200'
+            }`}
+          >
+            <Stethoscope className="w-3.5 h-3.5" />
+            Referral Partners
+            {referralsData.doctors.length > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-violet-500/20 text-violet-300 font-mono border border-violet-500/30">
+                {referralsData.doctors.length}
               </span>
             )}
           </button>
@@ -1077,42 +1146,78 @@ export default function CloudPortal({ onBack }) {
             </div>
 
             {/* Filter and Search Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="relative w-full sm:w-80">
-                <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Search by name, MRN, phone, area, doctor..."
-                  value={patientSearchQuery}
-                  onChange={(e) => setPatientSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-zinc-900/80 border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
-                />
-                {patientSearchQuery && (
-                  <button
-                    onClick={() => setPatientSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="relative w-full sm:w-80">
+                  <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search by name, MRN, phone, area, doctor..."
+                    value={patientSearchQuery}
+                    onChange={(e) => setPatientSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 bg-zinc-900/80 border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  />
+                  {patientSearchQuery && (
+                    <button
+                      onClick={() => setPatientSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+                  {/* Doctor Selector */}
+                  <div className="flex items-center gap-1.5 bg-zinc-900 border border-zinc-800 rounded-xl px-2.5 py-1">
+                    <Stethoscope className="w-3.5 h-3.5 text-violet-400 shrink-0" />
+                    <select
+                      value={selectedDoctorFilter}
+                      onChange={(e) => setSelectedDoctorFilter(e.target.value)}
+                      className="bg-transparent text-xs text-zinc-200 focus:outline-none cursor-pointer pr-1"
+                    >
+                      <option value="ALL" className="bg-zinc-900 text-zinc-300">All Referring Doctors</option>
+                      {uniqueDoctors.map(doc => (
+                        <option key={doc} value={doc} className="bg-zinc-900 text-zinc-200">{doc}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Gender Selector */}
+                  <div className="flex items-center gap-1">
+                    {['ALL', 'Male', 'Female'].map((gender) => (
+                      <button
+                        key={gender}
+                        onClick={() => setPatientGenderFilter(gender)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                          patientGenderFilter === gender
+                            ? 'bg-violet-600 text-white shadow-sm'
+                            : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white'
+                        }`}
+                      >
+                        {gender === 'ALL' ? 'All Genders' : gender}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <span className="text-xs text-zinc-500 hidden sm:inline">Gender:</span>
-                {['ALL', 'Male', 'Female'].map((gender) => (
+              {/* Active Doctor Filter Pill */}
+              {selectedDoctorFilter !== 'ALL' && (
+                <div className="flex items-center justify-between px-3.5 py-2 bg-violet-500/10 border border-violet-500/20 rounded-xl text-xs text-violet-300 animate-fadeIn">
+                  <div className="flex items-center gap-2">
+                    <Stethoscope className="w-4 h-4 text-violet-400" />
+                    <span>Showing <strong>{filteredPatients.length}</strong> patients referred by <strong className="text-white">{selectedDoctorFilter}</strong></span>
+                  </div>
                   <button
-                    key={gender}
-                    onClick={() => setPatientGenderFilter(gender)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                      patientGenderFilter === gender
-                        ? 'bg-violet-600 text-white shadow-sm'
-                        : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white'
-                    }`}
+                    onClick={() => setSelectedDoctorFilter('ALL')}
+                    className="flex items-center gap-1 text-[11px] font-semibold text-violet-300 hover:text-white bg-violet-500/20 hover:bg-violet-500/30 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
                   >
-                    {gender === 'ALL' ? 'All Genders' : gender}
+                    <X className="w-3 h-3" />
+                    Clear Filter
                   </button>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Patients Table */}
@@ -1182,9 +1287,14 @@ export default function CloudPortal({ onBack }) {
                               {pat.reasonForVisit || pat.testsOrdered || 'General Consultation'}
                             </div>
                             {pat.referringDoctorOrPartner && (
-                              <p className="text-[10px] text-zinc-500 truncate mt-0.5">
-                                Ref: {pat.referringDoctorOrPartner}
-                              </p>
+                              <button
+                                onClick={() => setSelectedDoctorFilter(pat.referringDoctorOrPartner)}
+                                className="text-[10px] text-violet-400 hover:text-violet-300 hover:underline truncate mt-0.5 flex items-center gap-1 cursor-pointer transition-colors"
+                                title={`Filter to all patients referred by ${pat.referringDoctorOrPartner}`}
+                              >
+                                <Stethoscope className="w-2.5 h-2.5 shrink-0" />
+                                <span>Ref: {pat.referringDoctorOrPartner}</span>
+                              </button>
                             )}
                           </td>
                           <td className="px-4 py-4">
@@ -1316,6 +1426,212 @@ export default function CloudPortal({ onBack }) {
                 </div>
               </div>
             )}
+
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------- */}
+        {/* TAB: REFERRAL PARTNERS & DOCTOR ANALYTICS                     */}
+        {/* ------------------------------------------------------------- */}
+        {activeTab === 'referrals' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header */}
+            <div className="p-6 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-bold text-white tracking-tight">Referral Partners & Doctor Analytics</h2>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20 font-mono">
+                      {referralsData.doctors.length} Referring Doctors
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Audited referral volumes, patient demographics, and earnings generated for <strong className="text-zinc-200">{currentTenant.name}</strong> ({currentTenant.id}).
+                  </p>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1.5 rounded-xl bg-violet-500/10 text-violet-300 border border-violet-500/20 text-xs font-medium flex items-center gap-1.5">
+                    <Stethoscope className="w-3.5 h-3.5 text-violet-400" />
+                    Doctor Commission Ledger
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Top KPI Metrics Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Card 1: Total Doctors */}
+              <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-2">
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span className="text-xs font-medium">Referring Doctors / Clinics</span>
+                  <div className="p-2 rounded-xl bg-violet-500/10 text-violet-400">
+                    <Stethoscope className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-bold text-white tracking-tight">
+                  {referralsData.doctors.length}
+                </p>
+                <p className="text-[11px] text-zinc-500">Active medical practices</p>
+              </div>
+
+              {/* Card 2: Total Referred Patients */}
+              <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-2">
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span className="text-xs font-medium">Referred Patients Sent</span>
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+                    <Users className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-bold text-white tracking-tight">
+                  {referralsData.doctors.reduce((sum, d) => sum + (d.patientCount || 0), 0)}
+                </p>
+                <p className="text-[11px] text-zinc-500">Credited to referring partners</p>
+              </div>
+
+              {/* Card 3: Gross Business Generated */}
+              <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-2">
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span className="text-xs font-medium">Gross Business Generated</span>
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                    <IndianRupee className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-bold text-emerald-400 tracking-tight">
+                  {formatINR(referralsData.doctors.reduce((sum, d) => sum + (d.revenueGenerated || 0), 0))}
+                </p>
+                <p className="text-[11px] text-zinc-500">Total lab diagnostic revenue</p>
+              </div>
+
+              {/* Card 4: Doctor Earnings / Commission */}
+              <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-2">
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span className="text-xs font-medium">Doctor Earnings / Commission</span>
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+                    <Wallet className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-bold text-amber-400 tracking-tight">
+                  {formatINR(referralsData.doctors.reduce((sum, d) => sum + (d.commissionEarned || 0), 0))}
+                </p>
+                <p className="text-[11px] text-zinc-500">Incentives credited / payable</p>
+              </div>
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search doctor name or clinic location..."
+                  value={referralSearchQuery}
+                  onChange={(e) => setReferralSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 bg-zinc-900/80 border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+                />
+                {referralSearchQuery && (
+                  <button
+                    onClick={() => setReferralSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="text-xs text-zinc-500">
+                Showing <strong>{filteredDoctors.length}</strong> of {referralsData.doctors.length} doctors
+              </div>
+            </div>
+
+            {/* Doctor & Referral Partners Directory Table */}
+            <div className="rounded-2xl bg-zinc-900/40 border border-zinc-800/80 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-zinc-300">
+                  <thead className="bg-zinc-950/60 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-zinc-800">
+                    <tr>
+                      <th className="px-5 py-3.5 font-semibold">Doctor / Partner Name</th>
+                      <th className="px-4 py-3.5 font-semibold">Catchment / Location</th>
+                      <th className="px-4 py-3.5 font-semibold">Patients Sent</th>
+                      <th className="px-4 py-3.5 font-semibold">Business Generated</th>
+                      <th className="px-4 py-3.5 font-semibold">Doctor Earnings (Cut)</th>
+                      <th className="px-4 py-3.5 font-semibold">Average Ticket</th>
+                      <th className="px-4 py-3.5 font-semibold">Last Referral</th>
+                      <th className="px-5 py-3.5 font-semibold text-right">Drilldown</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-800/60 font-medium">
+                    {filteredDoctors.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="px-5 py-12 text-center text-zinc-500">
+                          <Stethoscope className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm font-semibold text-zinc-400">No Referring Doctors Found</p>
+                          <p className="text-xs text-zinc-600 mt-1 max-w-sm mx-auto">
+                            {referralSearchQuery
+                              ? `No doctor or clinic matches "${referralSearchQuery}".`
+                              : `When visits or tests credited to referral partners are billed in SynOS, their volume, revenue, and commissions will populate here automatically.`}
+                          </p>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredDoctors.map((doc) => (
+                        <tr key={doc.doctorId || doc.doctorName} className="hover:bg-zinc-850/40 transition-colors">
+                          <td className="px-5 py-4">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 font-bold text-xs shrink-0">
+                                <Stethoscope className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-white">{doc.doctorName}</p>
+                                <span className="font-mono text-[10px] text-zinc-500">ID: {doc.doctorId || 'Direct'}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-1.5 text-zinc-300">
+                              <MapPin className="w-3 h-3 text-violet-400 shrink-0" />
+                              <span>{doc.location || 'Local Area'}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className="font-mono font-bold text-white bg-zinc-800 px-2.5 py-1 rounded-lg text-xs">
+                              {doc.patientCount || 0} Patients
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 font-bold text-emerald-400">
+                            {formatINR(doc.revenueGenerated)}
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className="font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md text-xs">
+                              {formatINR(doc.commissionEarned)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 font-mono text-zinc-300">
+                            {formatINR(doc.averageBill)}
+                          </td>
+                          <td className="px-4 py-4 text-[11px] text-zinc-400">
+                            {doc.lastReferralDate ? new Date(doc.lastReferralDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Recent'}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <button
+                              onClick={() => {
+                                setSelectedDoctorFilter(doc.doctorName);
+                                setActiveTab('patients');
+                              }}
+                              className="px-3 py-1.5 bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 hover:text-white border border-violet-500/30 rounded-lg text-xs font-semibold transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                              title={`View all ${doc.patientCount} patients referred by ${doc.doctorName}`}
+                            >
+                              <Users className="w-3 h-3" />
+                              View Patients
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
           </div>
         )}
