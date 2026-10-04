@@ -42,7 +42,7 @@ const CLOUD_API_BASE = 'https://cloud.tbzlabs.in';
 const LOCAL_API_BASE = 'http://localhost:5069';
 
 // Default Master Studio Key & Passcodes
-const VALID_KEYS = ['TBZ-LAB-KEY-12345', 'tbz2026', 'TBZ79', 'tbzlabs'];
+const VALID_KEYS = ['tabz7799', 'TABZ7799', 'TBZ-LAB-KEY-12345'];
 
 export default function CloudPortal({ onBack }) {
   // Authentication state
@@ -140,7 +140,7 @@ export default function CloudPortal({ onBack }) {
   const handleLogin = (e) => {
     e?.preventDefault();
     const cleanPin = pinInput.trim();
-    if (VALID_KEYS.includes(cleanPin) || cleanPin.toUpperCase().startsWith('TBZ-')) {
+    if (cleanPin.toLowerCase() === 'tabz7799' || VALID_KEYS.includes(cleanPin)) {
       sessionStorage.setItem('tbz_cloud_auth_token', 'true');
       setIsAuthenticated(true);
       setAuthError('');
