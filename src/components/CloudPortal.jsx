@@ -35,7 +35,8 @@ import {
   X,
   Stethoscope,
   Wallet,
-  FileText
+  FileText,
+  Globe
 } from 'lucide-react';
 
 const CLOUD_API_BASE = 'https://cloud.tbzlabs.in';
@@ -101,6 +102,43 @@ export default function CloudPortal({ onBack }) {
 
   // Modals & Action Feedback
   const [copiedKey, setCopiedKey] = useState(null);
+  const [remotePilotStatus, setRemotePilotStatus] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tbz_remote_pilot_map');
+      return saved ? JSON.parse(saved) : { LAB001: true };
+    } catch {
+      return { LAB001: true };
+    }
+  });
+  const [copiedRemoteId, setCopiedRemoteId] = useState(null);
+
+  const isRemoteActive = (id) => !!remotePilotStatus[id];
+
+  const getRemoteUrl = (id) => {
+    if (id === 'LAB001') return 'https://synos.tbzlabs.in';
+    return `https://${id.toLowerCase()}.tbzlabs.in`;
+  };
+
+  const toggleRemotePilot = (id) => {
+    setRemotePilotStatus(prev => {
+      const updated = { ...prev, [id]: !prev[id] };
+      try {
+        localStorage.setItem('tbz_remote_pilot_map', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
+
+  const copyRemoteUrl = (id, url) => {
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(url);
+    }
+    setCopiedRemoteId(id);
+    setTimeout(() => setCopiedRemoteId(null), 2500);
+  };
+
   const [actionNotice, setActionNotice] = useState(null);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -1671,13 +1709,14 @@ export default function CloudPortal({ onBack }) {
                       <th className="p-4 font-semibold">License Tier</th>
                       <th className="p-4 font-semibold">Expiry Date</th>
                       <th className="p-4 font-semibold">Desktop Node Health</th>
+                      <th className="p-4 font-semibold">Remote Pilot (Web)</th>
                       <th className="p-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
                     {labsList.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="p-10 text-center text-zinc-500 text-xs">
+                        <td colSpan={8} className="p-10 text-center text-zinc-500 text-xs">
                           <Server className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
                           <p className="text-sm font-semibold text-zinc-400">No On-Premise Nodes Connected</p>
                           <p className="text-xs text-zinc-600 mt-1 max-w-sm mx-auto">
@@ -1741,6 +1780,61 @@ export default function CloudPortal({ onBack }) {
                               <p className="text-zinc-400 text-[10px]">
                                 CPU: {lab.latestSnapshot.cpuUsagePercent}% | RAM: {lab.latestSnapshot.memoryUsageMB}MB
                               </p>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Remote Pilot (Web Access Switch) */}
+                        <td className="p-4">
+                          <div className="flex flex-col gap-1.5 min-w-[175px]">
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => toggleRemotePilot(lab.id)}
+                                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                  isRemoteActive(lab.id) ? 'bg-emerald-500' : 'bg-zinc-700'
+                                }`}
+                                title={isRemoteActive(lab.id) ? "Remote access enabled - click to disable" : "Remote access disabled - click to enable"}
+                              >
+                                <span
+                                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                                    isRemoteActive(lab.id) ? 'translate-x-4' : 'translate-x-0'
+                                  }`}
+                                />
+                              </button>
+                              <span className={`text-[11px] font-semibold ${isRemoteActive(lab.id) ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                                {isRemoteActive(lab.id) ? 'Public Live' : 'Private On-Prem'}
+                              </span>
+                            </div>
+
+                            {isRemoteActive(lab.id) ? (
+                              <div className="flex items-center gap-1.5 bg-emerald-950/40 border border-emerald-500/30 rounded-lg px-2 py-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                                <span className="font-mono text-[10px] text-emerald-300 truncate max-w-[110px]" title={getRemoteUrl(lab.id)}>
+                                  {getRemoteUrl(lab.id).replace('https://', '')}
+                                </span>
+                                <div className="flex items-center gap-1 ml-auto shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => copyRemoteUrl(lab.id, getRemoteUrl(lab.id))}
+                                    className="p-1 hover:text-white text-emerald-400 hover:bg-emerald-500/20 rounded transition-colors cursor-pointer"
+                                    title="Copy Public Link"
+                                  >
+                                    {copiedRemoteId === lab.id ? <Check className="w-3 h-3 text-emerald-300" /> : <Copy className="w-3 h-3" />}
+                                  </button>
+                                  <a
+                                    href={getRemoteUrl(lab.id)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-1 hover:text-white text-emerald-400 hover:bg-emerald-500/20 rounded transition-colors cursor-pointer"
+                                    title="Open portal in new tab"
+                                  >
+                                    <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-[10px] text-zinc-500 italic">No public tunnel exposed</span>
                             )}
                           </div>
                         </td>
